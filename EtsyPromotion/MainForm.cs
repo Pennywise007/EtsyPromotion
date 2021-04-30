@@ -9,13 +9,15 @@ using System.Xml.Serialization;
 using MetroFramework.Forms;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using EtsyPromotion.KeywordPromotion;
 
-namespace EtsyPromotion
+namespace EtsyPromotion.MainForm
 {
     public partial class MainForm : MetroForm
     {
         private List<EtsyLinkInfo> m_list = new List<EtsyLinkInfo>();
         private List<string> m_listIPs = new List<string>();
+        private List<KeywordPromotionForm> m_keyWordPromotionWindows = new List<KeywordPromotionForm>();
         private Thread m_updateIpThread;
 
         public MainForm()
@@ -33,9 +35,11 @@ namespace EtsyPromotion
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            // TODO ADD CLOSING AND CLOSE ALL m_keyWordPromotionWindows
             SaveSettingsToXML();
 
-            m_updateIpThread.Interrupt();
+            m_updateIpThread?.Interrupt();
+            m_updateIpThread?.Join();
         }
 
         private void SaveSettingsToXML()
@@ -66,42 +70,9 @@ namespace EtsyPromotion
             }
         }
 
-        private EtsyController createEtsyController()
-        {
-            // start new chrome as incognito
-            var options = new ChromeOptions();
-            //options.AddArguments("--incognito");
-
-            return new EtsyController(new ChromeDriver(options));
-        }
-
         private void Button_CheckLocation_Click(object sender, EventArgs e)
         {
-            EtsyController etsyController = createEtsyController();
-            etsyController.m_driver.Manage().Window.Maximize();
-
-            etsyController.OpenNewTab(
-                "https://www.etsy.com/listing/1006447031/custom-rubber-keychains?ref=related-3");
-
-            var listSuggestions = etsyController.GetSuggestionsFromThisShop();
-
-            foreach (var suggestion in listSuggestions)
-            {
-                etsyController.OpenInNewTab(suggestion);
-                //suggestion.Click();
-
-                //etsyController.Back();
-            }
-
-
-
-            //etsyController.PreviewPhotos();
-
-            //etsyController.WatchComments();
-
-            //etsyController.m_driver.Quit();
-
-           /* var etsyController = createEtsyController();
+            var etsyController = new EtsyController();
 
             string etsyUserLocation = null;
             try
@@ -121,7 +92,7 @@ namespace EtsyPromotion
             MessageBox.Show(string.Format("Местоположение пользователя определённое на etsty.com: {0}.\r\nМестоположение определённое через сторонние сервисы: {1}.\r\nIP: {2}",
                                           etsyUserLocation == null ? "не удалось определить местоположение на сайте Etsy" : etsyUserLocation,
                                           ipLocation, ip),
-                            "Результат определения местоположения");*/
+                            "Результат определения местоположения");
         }
 
         private void SetForeground()
@@ -162,7 +133,7 @@ namespace EtsyPromotion
                     {
                         try
                         {
-                            etsyController = createEtsyController();
+                            etsyController = new EtsyController();
                             etsyController.m_driver.Manage().Window.Maximize();
                         }
                         catch (Exception exception)
@@ -278,6 +249,26 @@ namespace EtsyPromotion
                 }));
             }
             return currentIP;
+        }
+
+        private void Button_KeyWordPromotion_Click(object sender, EventArgs e)
+        {
+            var windowIndex = m_keyWordPromotionWindows.Count;
+            KeywordPromotionForm promotionWindow = new KeywordPromotionForm(windowIndex, () =>
+            {
+                try
+                {
+                    m_keyWordPromotionWindows.RemoveAt(windowIndex);
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    Debug.Assert(false);
+                }
+            });
+
+            promotionWindow.Show();
+
+            m_keyWordPromotionWindows.Add(promotionWindow);
         }
     }
 

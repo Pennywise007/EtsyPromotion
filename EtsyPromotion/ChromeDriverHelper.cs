@@ -6,18 +6,19 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 
 namespace EtsyPromotion
 {
-    class AttributeHelper
+    class ByAttribute
     {
-        public static By SelectorByAttribute(string attributeName, string tag = "*")
+        public static By Name(string attributeName, string tag = "*")
         {
             return By.XPath($"//{tag}[@{attributeName}]");
         }
 
-        public static By SelectorByAttributeValue(string attributeName, string attributeValue, string tag = "*")
+        public static By Value(string attributeName, string attributeValue, string tag = "*")
         {
             return By.XPath($"//{tag}[@{attributeName} = '{attributeValue}']");
         }
@@ -55,9 +56,13 @@ namespace EtsyPromotion
             }
         }
 
-        public ChromeDriverHelper(IWebDriver driver)
+        public ChromeDriverHelper()
         {
-            m_driver = driver;
+            // start new chrome as incognito
+            var options = new ChromeOptions();
+            //options.AddArguments("--incognito");
+
+            m_driver = new ChromeDriver(options);
         }
 
         public void OpenNewTab(string newUrl)
@@ -98,21 +103,43 @@ namespace EtsyPromotion
             ((IJavaScriptExecutor)m_driver).ExecuteScript("window.history.go(-1);");
         }
 
-        public void ScrollToElement(IWebElement element)
+        public bool ScrollToElement(IWebElement element)
         {
             try
             {
                 Actions actions = new Actions(m_driver);
                 actions.MoveToElement(element);
                 actions.Perform();
+                return true;
             }
-            catch (Exception)
+            catch (Exception exception)
             {
+                Debug.Assert(false);
             }
+
+            try
+            {
+                if (!element.Location.IsEmpty)
+                    return false;
+
+                ScrollTo(element.Location.X, element.Location.Y);
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Debug.Assert(false);
+            }
+
+            return false;
         }
         public void ScrollTo(int xPosition = 0, int yPosition = 0)
         {
             ((IJavaScriptExecutor)m_driver).ExecuteScript($"window.scrollTo({xPosition}, {yPosition})");
+        }
+
+        public IWebElement GetParentElement(IWebElement element)
+        {
+            return element.FindElement(By.XPath("./.."));
         }
 
         private void DetermineConnectionSettings()
@@ -135,6 +162,5 @@ namespace EtsyPromotion
                 CloseCurrentTab();
             }
         }
-
     }
 }

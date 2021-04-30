@@ -6,15 +6,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
 namespace EtsyPromotion
 {
     class EtsyController : ChromeDriverHelper
     {
-        public EtsyController(IWebDriver driver) : base(driver)
-        { }
-
         public void AddCurrentItemToCard()
         {
             IWebElement element = m_driver.FindElement(By.ClassName("add-to-cart-form"));
@@ -95,7 +93,7 @@ namespace EtsyPromotion
 
             try
             {
-                commentsGroupElement = m_driver.FindElement(AttributeHelper.SelectorByAttributeValue("data-appears-component-name", "listing_page_reviews"));
+                commentsGroupElement = m_driver.FindElement(ByAttribute.Name("data-reviews-container", "div"));
             }
             catch (NoSuchElementException)
             {
@@ -176,7 +174,7 @@ namespace EtsyPromotion
         {
             IReadOnlyCollection<IWebElement> classSelector = context.FindElements(By.ClassName(name));
             IReadOnlyCollection<IWebElement> cssSelector = context.FindElements(By.CssSelector(name));
-            IReadOnlyCollection<IWebElement> attributeCSSSelector = context.FindElements(AttributeHelper.SelectorByAttribute(name));
+            IReadOnlyCollection<IWebElement> attributeCSSSelector = context.FindElements(ByAttribute.Name(name));
             IReadOnlyCollection<IWebElement> IdSelector = context.FindElements(By.Id(name));
             IReadOnlyCollection<IWebElement> nameSelector = context.FindElements(By.Name(name));
             IReadOnlyCollection<IWebElement> tagSelector = context.FindElements(By.TagName(name));
@@ -249,7 +247,7 @@ namespace EtsyPromotion
             {
                 ISearchContext buttonsContext = m_driver.FindElement(By.ClassName("listing-page-image-carousel-component")) ?? (ISearchContext)m_driver;
 
-                List<IWebElement> navigatorButtons = buttonsContext.FindElements(AttributeHelper.SelectorByAttribute("data-carousel-nav-button", "button")).ToList();
+                List<IWebElement> navigatorButtons = buttonsContext.FindElements(ByAttribute.Name("data-carousel-nav-button", "button")).ToList();
 
                 if (navigatorButtons.Count == 2)
                 {
@@ -297,7 +295,7 @@ namespace EtsyPromotion
 
                     try
                     {
-                        _videoImage = AttributeHelper.IsAttributeExist(m_imageElement, "data-carousel-thumbnail-video");
+                        _videoImage = ByAttribute.IsAttributeExist(m_imageElement, "data-carousel-thumbnail-video");
                     }
                     catch (Exception)
                     {
@@ -315,7 +313,7 @@ namespace EtsyPromotion
             {
                 ISearchContext buttonsContext = m_driver.FindElement(By.ClassName("listing-page-image-carousel-component")) ?? (ISearchContext)m_driver;
 
-                ReadOnlyCollection<IWebElement> images = buttonsContext.FindElements(AttributeHelper.SelectorByAttribute("data-carousel-pagination-item", "li"));
+                ReadOnlyCollection<IWebElement> images = buttonsContext.FindElements(ByAttribute.Name("data-carousel-pagination-item", "li"));
 
                 return images.Select(element => new PreviewImages
                 {

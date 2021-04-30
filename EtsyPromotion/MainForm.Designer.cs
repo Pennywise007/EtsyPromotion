@@ -1,4 +1,4 @@
-﻿namespace EtsyHacker
+﻿namespace EtsyPromotion.MainForm
 {
     partial class MainForm
     {
@@ -39,7 +39,9 @@
             this.Button_AddItemsToCard = new MetroFramework.Controls.MetroButton();
             this.Button_CheckLocation = new MetroFramework.Controls.MetroButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.Button_KeyWordPromotion = new MetroFramework.Controls.MetroButton();
             this.CurrentIP = new MetroFramework.Controls.MetroLink();
+            this.button1 = new MetroFramework.Controls.MetroButton();
             this.addToCardDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dateLastAddDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,8 +59,8 @@
             // 
             this.ItemsTable.AllowUserToOrderColumns = true;
             this.ItemsTable.AllowUserToResizeRows = false;
-            this.ItemsTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.ItemsTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ItemsTable.AutoGenerateColumns = false;
             this.ItemsTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -106,7 +108,7 @@
             this.ItemsTable.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.ItemsTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.ItemsTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ItemsTable.Size = new System.Drawing.Size(776, 267);
+            this.ItemsTable.Size = new System.Drawing.Size(776, 348);
             this.ItemsTable.TabIndex = 0;
             this.ItemsTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ItemsTable_CellContentClick);
             // 
@@ -123,13 +125,12 @@
             // 
             // Button_AddItemsToCard
             // 
-            this.Button_AddItemsToCard.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.Button_AddItemsToCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Button_AddItemsToCard.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Button_AddItemsToCard.Location = new System.Drawing.Point(3, 3);
+            this.Button_AddItemsToCard.Location = new System.Drawing.Point(10, 415);
             this.Button_AddItemsToCard.Name = "Button_AddItemsToCard";
-            this.Button_AddItemsToCard.Size = new System.Drawing.Size(508, 40);
+            this.Button_AddItemsToCard.Size = new System.Drawing.Size(775, 40);
             this.Button_AddItemsToCard.TabIndex = 2;
             this.Button_AddItemsToCard.Text = "Добавить выбранные товары в корзину";
             this.Button_AddItemsToCard.UseSelectable = true;
@@ -137,8 +138,8 @@
             // 
             // Button_CheckLocation
             // 
-            this.Button_CheckLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.Button_CheckLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Button_CheckLocation.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Button_CheckLocation.Location = new System.Drawing.Point(3, 3);
@@ -151,10 +152,10 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.CausesValidation = false;
-            this.splitContainer1.Location = new System.Drawing.Point(12, 334);
+            this.splitContainer1.Location = new System.Drawing.Point(12, 461);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -163,10 +164,25 @@
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this.Button_AddItemsToCard);
+            this.splitContainer1.Panel2.Controls.Add(this.Button_KeyWordPromotion);
             this.splitContainer1.Size = new System.Drawing.Size(776, 46);
             this.splitContainer1.SplitterDistance = 258;
             this.splitContainer1.TabIndex = 3;
+            // 
+            // Button_KeyWordPromotion
+            // 
+            this.Button_KeyWordPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Button_KeyWordPromotion.BackColor = System.Drawing.Color.White;
+            this.Button_KeyWordPromotion.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.Button_KeyWordPromotion.Location = new System.Drawing.Point(3, 3);
+            this.Button_KeyWordPromotion.Name = "Button_KeyWordPromotion";
+            this.Button_KeyWordPromotion.Size = new System.Drawing.Size(508, 40);
+            this.Button_KeyWordPromotion.TabIndex = 0;
+            this.Button_KeyWordPromotion.Text = "Продвижение по ключевым словам";
+            this.Button_KeyWordPromotion.UseSelectable = true;
+            this.Button_KeyWordPromotion.Click += new System.EventHandler(this.Button_KeyWordPromotion_Click);
             // 
             // CurrentIP
             // 
@@ -180,6 +196,15 @@
             this.CurrentIP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.CurrentIP.UseSelectable = true;
             this.CurrentIP.Click += new System.EventHandler(this.CurrentIP_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(232, 154);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(8, 8);
+            this.button1.TabIndex = 6;
+            this.button1.Text = "button1";
+            this.button1.UseSelectable = true;
             // 
             // addToCardDataGridViewCheckBoxColumn
             // 
@@ -218,14 +243,16 @@
             // 
             // etsyLinkInfoBindingSource
             // 
-            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.EtsyLinkInfo);
+            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyLinkInfo);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
-            this.ClientSize = new System.Drawing.Size(797, 403);
+            this.ClientSize = new System.Drawing.Size(797, 530);
+            this.Controls.Add(this.Button_AddItemsToCard);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.CurrentIP);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.ItemsTable);
@@ -259,6 +286,8 @@
         private System.Windows.Forms.DataGridViewButtonColumn OpenLink;
         private System.Windows.Forms.DataGridViewTextBoxColumn dateLastAddDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn noteDataGridViewTextBoxColumn;
+        private MetroFramework.Controls.MetroButton button1;
+        private MetroFramework.Controls.MetroButton Button_KeyWordPromotion;
     }
 }
 
