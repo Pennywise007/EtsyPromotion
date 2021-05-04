@@ -37,13 +37,13 @@
             this.ShopName = new MetroFramework.Controls.MetroLabel();
             this.button1 = new MetroFramework.Controls.MetroButton();
             this.PromotionList = new MetroFramework.Controls.MetroGrid();
-            this.enableDataGridViewCheckBoxColumn = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.Button_StartPromotion = new MetroFramework.Controls.MetroButton();
+            this.productsListDataSource = new System.Windows.Forms.BindingSource(this.components);
+            this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.keyWordsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dateLastAddDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.productsListDataSource = new System.Windows.Forms.BindingSource(this.components);
-            this.Button_StartPromotion = new MetroFramework.Controls.MetroButton();
             ((System.ComponentModel.ISupportInitialize)(this.PromotionList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).BeginInit();
             this.SuspendLayout();
@@ -123,7 +123,7 @@
             this.PromotionList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.PromotionList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.PromotionList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.enableDataGridViewCheckBoxColumn,
+            this.listingActionColumn,
             this.linkDataGridViewTextBoxColumn,
             this.keyWordsDataGridViewTextBoxColumn,
             this.dateLastAddDataGridViewTextBoxColumn,
@@ -156,15 +156,29 @@
             this.PromotionList.Size = new System.Drawing.Size(1047, 411);
             this.PromotionList.TabIndex = 3;
             // 
-            // enableDataGridViewCheckBoxColumn
+            // Button_StartPromotion
             // 
-            this.enableDataGridViewCheckBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.enableDataGridViewCheckBoxColumn.DataPropertyName = "Enable";
-            this.enableDataGridViewCheckBoxColumn.FillWeight = 75F;
-            this.enableDataGridViewCheckBoxColumn.HeaderText = "Продвигать";
-            this.enableDataGridViewCheckBoxColumn.Name = "enableDataGridViewCheckBoxColumn";
-            this.enableDataGridViewCheckBoxColumn.ToolTipText = "Продвигать товар";
-            this.enableDataGridViewCheckBoxColumn.Width = 75;
+            this.Button_StartPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.Button_StartPromotion.Location = new System.Drawing.Point(23, 519);
+            this.Button_StartPromotion.Name = "Button_StartPromotion";
+            this.Button_StartPromotion.Size = new System.Drawing.Size(1047, 48);
+            this.Button_StartPromotion.TabIndex = 4;
+            this.Button_StartPromotion.Text = "Запустить продвижение";
+            this.Button_StartPromotion.UseSelectable = true;
+            this.Button_StartPromotion.Click += new System.EventHandler(this.Button_StartPromotion_Click);
+            // 
+            // productsListDataSource
+            // 
+            this.productsListDataSource.DataSource = typeof(EtsyPromotion.KeywordPromotion.ProductsListItem);
+            // 
+            // listingActionColumn
+            // 
+            this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.listingActionColumn.DataPropertyName = "ItemAction";
+            this.listingActionColumn.FillWeight = 75F;
+            this.listingActionColumn.HeaderText = "Действие";
+            this.listingActionColumn.Name = "listingActionColumn";
             // 
             // linkDataGridViewTextBoxColumn
             // 
@@ -200,22 +214,6 @@
             this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
             this.noteDataGridViewTextBoxColumn.Width = 250;
             // 
-            // productsListDataSource
-            // 
-            this.productsListDataSource.DataSource = typeof(EtsyPromotion.KeywordPromotion.ProductsListItem);
-            // 
-            // Button_StartPromotion
-            // 
-            this.Button_StartPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button_StartPromotion.Location = new System.Drawing.Point(23, 519);
-            this.Button_StartPromotion.Name = "Button_StartPromotion";
-            this.Button_StartPromotion.Size = new System.Drawing.Size(1047, 48);
-            this.Button_StartPromotion.TabIndex = 4;
-            this.Button_StartPromotion.Text = "Запустить продвижение";
-            this.Button_StartPromotion.UseSelectable = true;
-            this.Button_StartPromotion.Click += new System.EventHandler(this.Button_StartPromotion_Click);
-            // 
             // KeywordPromotionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -247,7 +245,7 @@
         private System.Windows.Forms.BindingSource productsListDataSource;
         private MetroFramework.Controls.MetroGrid PromotionList;
         private MetroFramework.Controls.MetroButton Button_StartPromotion;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn enableDataGridViewCheckBoxColumn;
+        private System.Windows.Forms.DataGridViewComboBoxColumn listingActionColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn linkDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn keyWordsDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn dateLastAddDataGridViewTextBoxColumn;

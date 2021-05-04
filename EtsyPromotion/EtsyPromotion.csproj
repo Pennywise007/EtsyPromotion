@@ -68,6 +68,7 @@
     <Compile Include="KeywordPromotion\KeywordPromotionForm.Designer.cs">
       <DependentUpon>KeywordPromotionForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="KeywordPromotion\PromotionExecutor.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -26,6 +26,7 @@ namespace EtsyPromotion.KeywordPromotion
 
             InitializeComponent();
 
+            ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn, out m_actionDetails);
             LoadSettingsFromXML();
 
             PromotionList.DataSource = new BindingSource
@@ -56,7 +57,7 @@ namespace EtsyPromotion.KeywordPromotion
 
         private void SaveSettingsToXML()
         {
-            var smlSerializer = new XmlSerializer(typeof(List<ProductsListItem>));
+            var smlSerializer = new XmlSerializer(typeof(BindingList<ProductsListItem>));
             using (var wr = new StreamWriter($"promotion_{m_windowIndex}.xml"))
             {
                 smlSerializer.Serialize(wr, m_productsList);
@@ -67,10 +68,10 @@ namespace EtsyPromotion.KeywordPromotion
         {
             try
             {
-                var smlSerializer = new XmlSerializer(typeof(List<ProductsListItem>));
+                var smlSerializer = new XmlSerializer(typeof(BindingList<ProductsListItem>));
                 using (var rd = new StreamReader($"promotion_{m_windowIndex}.xml"))
                 {
-                    m_productsList = smlSerializer.Deserialize(rd) as List<ProductsListItem>;
+                    m_productsList = smlSerializer.Deserialize(rd) as BindingList<ProductsListItem>;
                 }
             }
             catch (FileNotFoundException)
@@ -93,7 +94,6 @@ namespace EtsyPromotion.KeywordPromotion
 
             m_workerThread = new Thread(() =>
             {
-                string errorMessage = null;
                 string buttonStartPromotionText = null;
 
                 BeginInvoke(new MethodInvoker(() =>
@@ -103,8 +103,6 @@ namespace EtsyPromotion.KeywordPromotion
                     Button_StartPromotion.Text = "Прервать продвижение";
                 }));
 
-                SearchController controller = null;
-
                 void OnEndExecution()
                 {
                     BeginInvoke(new MethodInvoker(() =>
@@ -112,180 +110,23 @@ namespace EtsyPromotion.KeywordPromotion
                         PromotionList.Enabled = true;
                         Button_StartPromotion.Text = buttonStartPromotionText ?? "Запустить продвижение";
                     }));
-
-                    controller?.m_driver.Quit();
-
-                    if (!string.IsNullOrEmpty(errorMessage))
-                        MessageBox.Show(errorMessage, "При выполнении продвижения возникли ошибки.");
                 }
+
+                PromotionExecutor promotion = null;
 
                 try
                 {
-                    void AddErrorMessage(string message)
-                    {
-                        errorMessage = message + "\n";
-                    }
+                    promotion = new PromotionExecutor(m_productsList);
 
-                    List<PromotionInfo> productsList = new List<PromotionInfo>();
-
-                    // valisdate and transform all parameters
-                    foreach (var productInfo in m_productsList)
-                    {
-                        if (!productInfo.Enable)
-                            continue;
-
-                        bool failed = false;
-                        var keyWordsArray = productInfo.KeyWords.Split(';');
-                        if (!keyWordsArray.Any())
-                        {
-                            failed = true;
-                            AddErrorMessage(
-                                $"Не удалось получить список ключевых слов из '{productInfo.KeyWords}', проверьте формат у элемента '{productInfo.KeyWords}'.");
-                        }
-
-                        string listingID = null;
-                        try
-                        {
-                            // link example https://www.etsy.com/listing/ID/... try extract ID
-                            var match = Regex.Match(productInfo.Link, "etsy.com/listing/(.*)/");
-                            listingID = match.Groups[1].Value;
-                        }
-                        catch (Exception exception)
-                        {
-                            failed = true;
-                            AddErrorMessage(
-                                $"Не удалось получить идентификатор из ссылки '{productInfo.Link}', проверьте что ссылка у элемента '{productInfo.KeyWords} валидна\n\n" +
-                                exception.ToString());
-                        }
-
-                        if (!failed)
-                            productsList.Add(new PromotionInfo
-                                {m_listingId = listingID, m_keyWords = keyWordsArray.ToList()});
-                    }
-
-                    if (!productsList.Any())
-                    {
-                        return;
-                    }
-
-                    controller = new SearchController();
-                    controller.m_driver.Manage().Window.Maximize();
-
-                    controller.OpenNewTab("https://www.etsy.com/");
-
-                    foreach (var productInfo in productsList)
-                    {
-                        foreach (var keyWord in productInfo.m_keyWords)
-                        {
-                            controller.SearchText(keyWord);
-
-                            int currentPage = 0;
-                            IWebElement productLink = null;
-
-                            do
-                            {
-                                if (currentPage != 0)
-                                {
-                                    // whaiting for loading page
-                                    Thread.Sleep(3000);
-                                }
-
-                                ++currentPage;
-
-                                List<IWebElement> allResults = new List<IWebElement>();
-                                try
-                                {
-                                    allResults = controller.getListOfSearchResults();
-                                }
-                                catch (NoSuchElementException)
-                                {
-                                }
-
-                                void ScrollResults()
-                                {
-                                    int? stopIndex = null;
-
-                                    if (productLink != null)
-                                    {
-                                        try
-                                        {
-                                            stopIndex = allResults.FindIndex(element =>
-                                                element.TagName == productLink.TagName);
-                                        }
-                                        catch (ArgumentNullException exception)
-                                        {
-                                            Debug.Assert(false);
-                                        }
-                                    }
-
-                                    for (int currentIndex = 0, maxIndex = stopIndex ?? allResults.Count;
-                                        currentIndex < maxIndex;
-                                        currentIndex += 7)
-                                    {
-                                        if (controller.ScrollToElement(allResults[currentIndex]))
-                                            Thread.Sleep(1000);
-                                    }
-
-                                    if (stopIndex == null)
-                                        return;
-
-                                    if (controller.ScrollToElement(allResults[stopIndex.Value]))
-                                        Thread.Sleep(1000);
-                                }
-
-                                try
-                                {
-                                    productLink = controller.FindListingInSearchResults(productInfo.m_listingId);
-                                }
-                                catch (NoSuchElementException)
-                                {
-                                }
-
-                                ScrollResults();
-                            } while (productLink == null && currentPage < 100 && controller.OpenNextSearchPage());
-
-                            if (productLink != null)
-                            {
-                                try
-                                {
-                                    productLink.Click();
-
-                                    controller.PreviewPhotos();
-
-                                    controller.WatchComments();
-
-                                    controller.AddCurrentItemToCard();
-                                }
-                                catch (Exception exception)
-                                {
-                                    AddErrorMessage(
-                                        $"Не удалось добавить товар с идентификатором {productInfo.m_listingId} в корзину.");
-                                }
-                            }
-                            else
-                            {
-                                if (currentPage < 2)
-                                {
-                                    AddErrorMessage(
-                                        $"Не удалось найти товар c {productInfo.m_listingId} по ключевому слову {keyWord}.\n" +
-                                        "Проверьте что по ключевым словам есть результаты поиска. " +
-                                        "Если есть много страниц с результатами значит программа не смогла переключить страницы, обратитесь к автору.");
-                                }
-                                else
-                                {
-                                    AddErrorMessage(
-                                        $"Не удалось найти товар c идентификатором {productInfo.m_listingId} по ключевому слову {keyWord}.");
-                                }
-                            }
-                        }
-                    }
+                    promotion.Execute();
                 }
                 catch (ThreadInterruptedException)
                 {
-                    errorMessage = null;
+                    promotion?.ClearErrorMessage();
                 }
                 catch (Exception)
                 {
+                    Debug.Assert(false);
                 }
                 finally
                 {
@@ -295,22 +136,17 @@ namespace EtsyPromotion.KeywordPromotion
             m_workerThread.Start();
         }
 
-        public class PromotionInfo
-        {
-            public string m_listingId;
-            public List<string> m_keyWords;
-        }
-
         // index of window settings
         private int m_windowIndex;
-        private List<ProductsListItem> m_productsList = new List<ProductsListItem>();
+        private BindingList<ProductsListItem> m_productsList = new BindingList<ProductsListItem>();
+        private BindingList<ListingActionDetails> m_actionDetails;
         private Thread m_workerThread;
         private Action m_onFormClosedCallBack;
     }
 
     public class ProductsListItem
     {
-        public bool Enable { get; set; } = true;
+        public ListingActionDetails.ListingAction ItemAction { get; set; }
         public string Link { get; set; }
         public string KeyWords { get; set; }
         public string DateLastAdd { get; set; }
