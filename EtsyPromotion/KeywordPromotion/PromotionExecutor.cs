@@ -12,14 +12,18 @@ using System.Windows.Forms;
 
 namespace EtsyPromotion.KeywordPromotion
 {
-    class PromotionExecutor
+    class PromotionExecutor : IDisposable
     {
-        public PromotionExecutor(BindingList<ProductsListItem> productsList)
+        public PromotionExecutor(BindingList<ProductsListItem> productsList, Action<int> onEndExecutionForElementByIndex)
         {
+            m_onEndExecutionForElementByIndex = onEndExecutionForElementByIndex;
+
             // validate and transform all parameters
-            foreach (var productInfo in productsList)
+            for (int index = 0; index < productsList.Count; ++index)
             {
-                if (productInfo.ItemAction == ListingActionDetails.ListingAction.Skip)
+                var productInfo = productsList[index];
+                if (productInfo.ItemAction == ListingActionDetails.ListingAction.Skip ||
+                    string.IsNullOrEmpty(productInfo.Link))
                     continue;
 
                 bool failed = false;
@@ -27,7 +31,7 @@ namespace EtsyPromotion.KeywordPromotion
                 if (!keyWordsArray.Any())
                 {
                     failed = true;
-                    AddErrorMessage($"Не удалось получить список ключевых слов из '{productInfo.KeyWords}', проверьте формат у элемента '{productInfo.KeyWords}'.");
+                    AddErrorMessage($"Не удалось получить список ключевых слов из '{productInfo.KeyWords}'(номер в таблице {index + 1}), проверьте формат у элемента '{productInfo.KeyWords}'.");
                 }
 
                 string listingID = null;
@@ -41,7 +45,7 @@ namespace EtsyPromotion.KeywordPromotion
                 {
                     failed = true;
                     AddErrorMessage(
-                        $"Не удалось получить идентификатор из ссылки '{productInfo.Link}', проверьте что ссылка у элемента '{productInfo.KeyWords} валидна\n\n" +
+                        $"Не удалось получить идентификатор из ссылки '{productInfo.Link}'(номер в таблице {index + 1}), проверьте что ссылка у элемента '{productInfo.KeyWords} валидна и её формат https://www.etsy.com/listing/123123123/...\n\n" +
                         exception.ToString());
                 }
 
@@ -49,6 +53,7 @@ namespace EtsyPromotion.KeywordPromotion
                     m_promotionInfo.Add(new PromotionInfo
                     {
                         m_addToCard = productInfo.ItemAction == ListingActionDetails.ListingAction.AddToCard,
+                        m_elementIndexInProductsList = index,
                         m_listingId = listingID,
                         m_keyWords = keyWordsArray.ToList()
                     });
@@ -60,7 +65,7 @@ namespace EtsyPromotion.KeywordPromotion
             }
         }
 
-        ~PromotionExecutor()
+        public void Dispose()
         {
             m_controller?.m_driver.Quit();
 
@@ -100,7 +105,7 @@ namespace EtsyPromotion.KeywordPromotion
                         List<IWebElement> allResults = new List<IWebElement>();
                         try
                         {
-                            allResults = m_controller.getListOfSearchResults();
+                            allResults = m_controller.GetListOfSearchResults();
                         }
                         catch (NoSuchElementException) {}
 
@@ -111,7 +116,7 @@ namespace EtsyPromotion.KeywordPromotion
                         catch (NoSuchElementException) {}
 
                         ScrollSearchResults(allResults, productLink);
-                    } while (productLink == null && currentPage < 100 && m_controller.OpenNextSearchPage());
+                    } while (productLink == null && currentPage < 100 && m_controller.OpenNextSearchPage(currentPage + 1));
 
                     if (productLink != null)
                     {
@@ -125,11 +130,13 @@ namespace EtsyPromotion.KeywordPromotion
 
                             if (productInfo.m_addToCard)
                                 m_controller.AddCurrentItemToCard();
+
+                            m_onEndExecutionForElementByIndex(productInfo.m_elementIndexInProductsList);
                         }
                         catch (Exception)
                         {
                             AddErrorMessage(
-                                $"Не удалось добавить товар с идентификатором {productInfo.m_listingId} в корзину.");
+                                $"Не удалось добавить товар с идентификатором {productInfo.m_listingId}(номер в таблице {productInfo.m_elementIndexInProductsList + 1}) в корзину.");
                         }
                     }
                     else
@@ -137,14 +144,14 @@ namespace EtsyPromotion.KeywordPromotion
                         if (currentPage < 2)
                         {
                             AddErrorMessage(
-                                $"Не удалось найти товар c {productInfo.m_listingId} по ключевому слову {keyWord}.\n" +
+                                $"Не удалось найти товар c идентификатором {productInfo.m_listingId}(номер в таблице {productInfo.m_elementIndexInProductsList + 1}) по ключевому слову {keyWord}.\n" +
                                 "Проверьте что по ключевым словам есть результаты поиска. " +
                                 "Если есть много страниц с результатами значит программа не смогла переключить страницы, обратитесь к автору.");
                         }
                         else
                         {
                             AddErrorMessage(
-                                $"Не удалось найти товар c идентификатором {productInfo.m_listingId} по ключевому слову {keyWord}.");
+                                $"Не удалось найти товар c идентификатором {productInfo.m_listingId}(номер в таблице {productInfo.m_elementIndexInProductsList + 1}) по ключевому слову {keyWord}.");
                         }
                     }
                 }
@@ -153,7 +160,7 @@ namespace EtsyPromotion.KeywordPromotion
 
         public void AddErrorMessage(string message)
         {
-            m_errorMessage += message + "\n";
+            m_errorMessage += message + "\n\n\n";
         }
 
         public void ClearErrorMessage()
@@ -177,30 +184,38 @@ namespace EtsyPromotion.KeywordPromotion
                 }
             }
 
+#if DEBUG
+            const int waitingTimeMillisec = 10;
+#else
+            const int waitingTimeMillisec = 1000;
+#endif
+
             for (int currentIndex = 0, maxIndex = stopIndex ?? allResults.Count;
                 currentIndex < maxIndex;
                 currentIndex += 7)
             {
                 if (m_controller.ScrollToElement(allResults[currentIndex]))
-                    Thread.Sleep(1000);
+                    Thread.Sleep(waitingTimeMillisec);
             }
 
             if (stopIndex == null)
                 return;
 
             if (m_controller.ScrollToElement(allResults[stopIndex.Value]))
-                Thread.Sleep(1000);
+                Thread.Sleep(waitingTimeMillisec);
         }
 
         private class PromotionInfo
         {
             public bool m_addToCard;
+            public int m_elementIndexInProductsList;
             public string m_listingId;
             public List<string> m_keyWords;
         }
 
         private SearchController m_controller;
         private List<PromotionInfo> m_promotionInfo = new List<PromotionInfo>();
+        private Action<int> m_onEndExecutionForElementByIndex;
         private string m_errorMessage;
     }
 }

@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using MetroFramework.Forms;
-using OpenQA.Selenium;
 
 namespace EtsyPromotion.KeywordPromotion
 {
@@ -26,7 +18,7 @@ namespace EtsyPromotion.KeywordPromotion
 
             InitializeComponent();
 
-            ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn, out m_actionDetails);
+            ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn);
             LoadSettingsFromXML();
 
             PromotionList.DataSource = new BindingSource
@@ -79,7 +71,7 @@ namespace EtsyPromotion.KeywordPromotion
             }
             catch (Exception exception)
             {
-                EtsyPromotion.Globals.HandleException(exception, "Ошибка при загрузке настроек");
+                Globals.HandleException(exception, "Ошибка при загрузке настроек");
             }
         }
 
@@ -88,7 +80,7 @@ namespace EtsyPromotion.KeywordPromotion
             if (m_workerThread != null)
             {
                 m_workerThread.Interrupt();
-                m_workerThread.Join();
+                //m_workerThread.Join();
                 return;
             }
 
@@ -96,41 +88,61 @@ namespace EtsyPromotion.KeywordPromotion
             {
                 string buttonStartPromotionText = null;
 
-                BeginInvoke(new MethodInvoker(() =>
+                var invoker = BeginInvoke(new MethodInvoker(() =>
                 {
                     PromotionList.Enabled = false;
                     buttonStartPromotionText = Button_StartPromotion.Text;
                     Button_StartPromotion.Text = "Прервать продвижение";
                 }));
 
-                void OnEndExecution()
+                IAsyncResult OnEndExecution()
                 {
-                    BeginInvoke(new MethodInvoker(() =>
+                    if (!invoker.IsCompleted)
+                        Trace.Assert(invoker.AsyncWaitHandle.WaitOne());
+
+                    return BeginInvoke(new MethodInvoker(() =>
                     {
                         PromotionList.Enabled = true;
                         Button_StartPromotion.Text = buttonStartPromotionText ?? "Запустить продвижение";
                     }));
                 }
 
-                PromotionExecutor promotion = null;
-
                 try
                 {
-                    promotion = new PromotionExecutor(m_productsList);
+                    PromotionExecutor promotion = null;
 
-                    promotion.Execute();
+                    try
+                    {
+                        promotion = new PromotionExecutor(m_productsList, (index) =>
+                        {
+                            m_productsList[index].DateLastPromotion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                            BeginInvoke(new MethodInvoker(() => PromotionList.Refresh()));
+                        });
+
+                        promotion.Execute();
+                    }
+                    catch (ThreadInterruptedException)
+                    {
+                        promotion?.ClearErrorMessage();
+                    }
+                    catch (Exception)
+                    {
+                        Debug.Assert(false);
+                    }
+
+                    var endExecutionAwait = OnEndExecution();
+
+                    promotion.Dispose();
+
+                    if (!endExecutionAwait.IsCompleted)
+                        endExecutionAwait.AsyncWaitHandle.WaitOne();
                 }
                 catch (ThreadInterruptedException)
                 {
-                    promotion?.ClearErrorMessage();
                 }
                 catch (Exception)
                 {
                     Debug.Assert(false);
-                }
-                finally
-                {
-                    OnEndExecution();
                 }
             });
             m_workerThread.Start();
@@ -139,17 +151,16 @@ namespace EtsyPromotion.KeywordPromotion
         // index of window settings
         private int m_windowIndex;
         private BindingList<ProductsListItem> m_productsList = new BindingList<ProductsListItem>();
-        private BindingList<ListingActionDetails> m_actionDetails;
         private Thread m_workerThread;
         private Action m_onFormClosedCallBack;
     }
 
     public class ProductsListItem
     {
-        public ListingActionDetails.ListingAction ItemAction { get; set; }
+        public ListingActionDetails.ListingAction ItemAction { get; set; } = ListingActionDetails.ListingAction.AddToCard;
         public string Link { get; set; }
         public string KeyWords { get; set; }
-        public string DateLastAdd { get; set; }
+        public string DateLastPromotion { get; set; }
         public string Note { get; set; }
     }
 }

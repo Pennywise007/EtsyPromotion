@@ -78,6 +78,7 @@
             this.ShopLink.Size = new System.Drawing.Size(624, 20);
             this.ShopLink.TabIndex = 0;
             this.ShopLink.UseSelectable = true;
+            this.ShopLink.Visible = false;
             this.ShopLink.WaterMarkColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
             this.ShopLink.WaterMarkFont = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Pixel);
             // 
@@ -89,6 +90,7 @@
             this.ShopName.Size = new System.Drawing.Size(219, 19);
             this.ShopName.TabIndex = 1;
             this.ShopName.Text = "Ссылка на продвигаемый магазин";
+            this.ShopName.Visible = false;
             // 
             // button1
             // 
@@ -100,6 +102,7 @@
             this.button1.TabIndex = 2;
             this.button1.Text = "Загрузить список товаров";
             this.button1.UseSelectable = true;
+            this.button1.Visible = false;
             // 
             // PromotionList
             // 
@@ -179,6 +182,7 @@
             this.listingActionColumn.FillWeight = 75F;
             this.listingActionColumn.HeaderText = "Действие";
             this.listingActionColumn.Name = "listingActionColumn";
+            this.listingActionColumn.Width = 160;
             // 
             // linkDataGridViewTextBoxColumn
             // 
@@ -186,6 +190,7 @@
             this.linkDataGridViewTextBoxColumn.FillWeight = 50F;
             this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
             this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
+            this.linkDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.linkDataGridViewTextBoxColumn.Width = 304;
             // 
             // keyWordsDataGridViewTextBoxColumn
@@ -199,10 +204,10 @@
             // dateLastAddDataGridViewTextBoxColumn
             // 
             this.dateLastAddDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.dateLastAddDataGridViewTextBoxColumn.DataPropertyName = "DateLastAdd";
-            this.dateLastAddDataGridViewTextBoxColumn.HeaderText = "Дата последнего добавления";
+            this.dateLastAddDataGridViewTextBoxColumn.DataPropertyName = "DateLastPromotion";
+            this.dateLastAddDataGridViewTextBoxColumn.HeaderText = "Последнее продвижение";
             this.dateLastAddDataGridViewTextBoxColumn.Name = "dateLastAddDataGridViewTextBoxColumn";
-            this.dateLastAddDataGridViewTextBoxColumn.ToolTipText = "Дата последнего добавления товара в корзину";
+            this.dateLastAddDataGridViewTextBoxColumn.ToolTipText = "Дата последнего продвжения товара";
             this.dateLastAddDataGridViewTextBoxColumn.Width = 125;
             // 
             // noteDataGridViewTextBoxColumn

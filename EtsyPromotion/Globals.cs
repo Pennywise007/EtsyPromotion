@@ -32,26 +32,17 @@ namespace EtsyPromotion
 
         public ListingAction Action { get; set; }
         public String Presentation { get; set; }
-        public ListingActionDetails Self { get { return this; } }
 
-        public ListingActionDetails(ListingAction action, String presentation)
+        public static void SetupListingActionsToColumn(ref DataGridViewComboBoxColumn column)
         {
-            this.Action = action;
-            this.Presentation = presentation;
-        }
-
-        public static void SetupListingActionsToColumn(ref DataGridViewComboBoxColumn column, out BindingList<ListingActionDetails> details)
-        {
-            details = new BindingList<ListingActionDetails>
+            column.DataSource = new BindingList<ListingActionDetails>
             {
-                new ListingActionDetails(ListingAction.Skip, "Пропускать"),
-                new ListingActionDetails(ListingAction.AddToCard, "Добавлять в корзину"),
-                new ListingActionDetails(ListingAction.Preview, "Только предпросмотр")
+                new ListingActionDetails{ Action = ListingAction.Skip, Presentation = "Пропускать" },
+                new ListingActionDetails{ Action = ListingAction.AddToCard, Presentation = "Добавлять в корзину" },
+                new ListingActionDetails{ Action = ListingAction.Preview, Presentation = "Предосмотр(фото + комментарии)" }
             };
-            column.DataSource = details;
-            column.DataPropertyName = "Action";
             column.DisplayMember = "Presentation";
-            column.ValueMember = "Self";
+            column.ValueMember = "Action";
         }
     }
 }

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using MetroFramework.Forms;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using EtsyPromotion.KeywordPromotion;
 
 namespace EtsyPromotion.MainForm
@@ -24,6 +23,8 @@ namespace EtsyPromotion.MainForm
         {
             InitializeComponent();
 
+            ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn);
+
             LoadSettingsFromXML();
 
             ItemsTable.DataSource = new BindingSource
@@ -33,9 +34,23 @@ namespace EtsyPromotion.MainForm
             };
         }
 
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            while (m_keyWordPromotionWindows.Any())
+            {
+                int previousOpenedFormsCount = m_keyWordPromotionWindows.Count;
+                m_keyWordPromotionWindows.First().Close();
+                bool formClosed = previousOpenedFormsCount > m_keyWordPromotionWindows.Count;
+                if (!formClosed)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+            }
+        }
+
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            // TODO ADD CLOSING AND CLOSE ALL m_keyWordPromotionWindows
             SaveSettingsToXML();
 
             m_updateIpThread?.Interrupt();
@@ -126,7 +141,8 @@ namespace EtsyPromotion.MainForm
                 var successfullyAddedToCard = 0;
                 foreach (var linkInfo in m_list)
                 {
-                    if (!linkInfo.AddToCard || string.IsNullOrEmpty(linkInfo.Link))
+                    if (linkInfo.ItemAction == ListingActionDetails.ListingAction.Skip ||
+                        string.IsNullOrEmpty(linkInfo.Link))
                         continue;
 
                     if (etsyController == null)
@@ -160,9 +176,10 @@ namespace EtsyPromotion.MainForm
 
                         etsyController.WatchComments();
 
-                        etsyController.AddCurrentItemToCard();
+                        if (linkInfo.ItemAction == ListingActionDetails.ListingAction.AddToCard)
+                            etsyController.AddCurrentItemToCard();
 
-                        linkInfo.DateLastAdd = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                        linkInfo.DateLastPromotion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
 
                         ItemsTable.Refresh();
 
@@ -200,7 +217,7 @@ namespace EtsyPromotion.MainForm
 
         private void ItemsTable_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.ColumnIndex == ItemsTable.Columns.IndexOf(OpenLink))
+            if (e.RowIndex >= 0 && e.ColumnIndex == ItemsTable.Columns.IndexOf(openLinkColumn))
             {
                 if (e.RowIndex < m_list.Count)
                 {
@@ -239,7 +256,15 @@ namespace EtsyPromotion.MainForm
 
         private string GetCurrentIP(bool updateTextControl = false)
         {
-            string currentIP = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
+            string currentIP;
+            try
+            {
+                currentIP = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
+            }
+            catch (Exception)
+            {
+                currentIP = "Не удалось определить";
+            }
 
             if (updateTextControl)
             {
@@ -274,9 +299,9 @@ namespace EtsyPromotion.MainForm
 
     public class EtsyLinkInfo
     {
-        public bool AddToCard { get; set; } = true;
+        public ListingActionDetails.ListingAction ItemAction { get; set; } = ListingActionDetails.ListingAction.AddToCard;
         public string Link { get; set; }
-        public string DateLastAdd { get; set; }
+        public string DateLastPromotion { get; set; }
         public string Note { get; set; }
     }
 }

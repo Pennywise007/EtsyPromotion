@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 
@@ -19,7 +21,7 @@ namespace EtsyPromotion.KeywordPromotion
             mainSearchField.SendKeys(Keys.Enter);
         }
 
-        public List<IWebElement> getListOfSearchResults()
+        public List<IWebElement> GetListOfSearchResults()
         {
             return GetSearchResultContext().FindElements(By.ClassName("js-merch-stash-check-listing")).ToList();
         }
@@ -30,23 +32,47 @@ namespace EtsyPromotion.KeywordPromotion
             return GetSearchResultContext().FindElement(ByAttribute.Value("data-listing-id", listingId));
         }
 
-        public bool OpenNextSearchPage()
+        public bool OpenNextSearchPage(int nextPageNumber)
         {
+            ISearchContext searchPagesGroup;
             try
             {
-                ISearchContext searchPagesGroup = m_driver.FindElement(ByAttribute.Name("data-search-pagination", "div"));
-                List<IWebElement> pages = searchPagesGroup.FindElements(By.ClassName("wt-action-group__item-container")).ToList();
-                if (pages.Any())
-                {
-                    if (pages.Last().Text != "Next")
-                        throw new NoSuchElementException();
+                searchPagesGroup = m_driver.FindElement(ByAttribute.Name("data-search-pagination", "div"));
+            }
+            catch (NoSuchElementException)
+            {
+                return false;
+            }
 
-                    ScrollToElement(pages.Last());
-                    pages.Last().Click();
+            List<IWebElement> switchPageButtonGroups = searchPagesGroup.FindElements(By.ClassName("wt-action-group__item-container")).ToList();
+            if (!switchPageButtonGroups.Any())
+                return false;
+
+            for (int index = switchPageButtonGroups.Count - 1; index >= 0; --index)
+            {
+                var pageGroup = switchPageButtonGroups[index];
+                var buttonLink = ByLink.GetElementLink(pageGroup);
+
+                if (string.IsNullOrEmpty(buttonLink))
+                    continue;
+
+                try
+                {
+                    // example: data-href=https://www.etsy.com/search?q=%SEARCH_TEXT%&ref=pagination%SOMETHING%&page=%PAGE_NUMBER% try extract PAGE_NUMBER
+                    var match = Regex.Match(buttonLink, "etsy.com/search.*ref=pagination.*&page=(.*)");
+                    var pageNumber = int.Parse(match.Groups[1].Value);
+                    if (nextPageNumber != pageNumber)
+                        continue;
+
+                    ScrollToElement(pageGroup);
+                    pageGroup.Click();
                     return true;
                 }
+                catch (Exception)
+                {
+                    Debug.Assert(false);
+                }
             }
-            catch (NoSuchElementException) { }
 
             return false;
         }

@@ -29,6 +29,31 @@ namespace EtsyPromotion
         }
     }
 
+    class ByLink
+    {
+        public static string GetElementLink(IWebElement elements)
+        {
+            const string linkAttributeName = "href";
+            string elementLink = null;
+            try
+            {
+                elementLink = elements.GetAttribute(linkAttributeName);
+            }
+            catch (StaleElementReferenceException) { }
+
+            if (string.IsNullOrEmpty(elementLink))
+            {
+                try
+                {
+                    var elementWithLink = elements.FindElement(By.XPath(".//a"));
+                    elementLink = elementWithLink.GetAttribute(linkAttributeName) ?? elementWithLink.GetAttribute("data-href");
+                }
+                catch (NoSuchElementException) { }
+                catch (StaleElementReferenceException) { }
+            }
+            return elementLink;
+        }
+    }
     class ChromeDriverHelper
     {
         private string _ip;
@@ -105,6 +130,7 @@ namespace EtsyPromotion
 
         public bool ScrollToElement(IWebElement element)
         {
+            Trace.Assert(element != null);
             try
             {
                 Actions actions = new Actions(m_driver);
@@ -112,7 +138,7 @@ namespace EtsyPromotion
                 actions.Perform();
                 return true;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 Debug.Assert(false);
             }
@@ -125,7 +151,7 @@ namespace EtsyPromotion
                 ScrollTo(element.Location.X, element.Location.Y);
                 return true;
             }
-            catch (Exception exception)
+            catch (Exception)
             {
                 Debug.Assert(false);
             }
