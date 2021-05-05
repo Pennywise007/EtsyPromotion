@@ -30,7 +30,7 @@ namespace EtsyPromotion.KeywordPromotion
 
         private void KeywordPromotion_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (m_workerThread != null &&
+            if (m_promotionThread != null &&
                 MessageBox.Show("Если закрыть окно то продвижение указанных товаров приостановится, продолжить закрытие?",
                                 "Закрытие окна",
                                 MessageBoxButtons.YesNo) == DialogResult.No)
@@ -39,8 +39,8 @@ namespace EtsyPromotion.KeywordPromotion
 
         private void KeywordPromotion_FormClosed(object sender, FormClosedEventArgs e)
         {
-            m_workerThread?.Interrupt();
-            m_workerThread?.Join();
+            m_promotionThread?.Interrupt();
+            m_promotionThread?.Join();
 
             SaveSettingsToXML();
 
@@ -77,32 +77,32 @@ namespace EtsyPromotion.KeywordPromotion
 
         private void Button_StartPromotion_Click(object sender, EventArgs e)
         {
-            if (m_workerThread != null)
+            if (m_promotionThread != null)
             {
-                m_workerThread.Interrupt();
-                //m_workerThread.Join();
+                m_promotionThread.Interrupt();
+
+                Button_StartPromotion.Enabled = false;
+                Button_StartPromotion.Text = "Прерываем продвижение...";
                 return;
             }
 
-            m_workerThread = new Thread(() =>
+            m_promotionThread = new Thread(() =>
             {
                 string buttonStartPromotionText = null;
 
-                var invoker = BeginInvoke(new MethodInvoker(() =>
+                BeginInvoke(new MethodInvoker(() =>
                 {
                     PromotionList.Enabled = false;
                     buttonStartPromotionText = Button_StartPromotion.Text;
                     Button_StartPromotion.Text = "Прервать продвижение";
                 }));
 
-                IAsyncResult OnEndExecution()
+                void OnEndExecution()
                 {
-                    if (!invoker.IsCompleted)
-                        Trace.Assert(invoker.AsyncWaitHandle.WaitOne());
-
-                    return BeginInvoke(new MethodInvoker(() =>
+                    BeginInvoke(new MethodInvoker(() =>
                     {
                         PromotionList.Enabled = true;
+                        Button_StartPromotion.Enabled = true;
                         Button_StartPromotion.Text = buttonStartPromotionText ?? "Запустить продвижение";
                     }));
                 }
@@ -130,12 +130,9 @@ namespace EtsyPromotion.KeywordPromotion
                         Debug.Assert(false);
                     }
 
-                    var endExecutionAwait = OnEndExecution();
-
                     promotion.Dispose();
 
-                    if (!endExecutionAwait.IsCompleted)
-                        endExecutionAwait.AsyncWaitHandle.WaitOne();
+                    OnEndExecution();
                 }
                 catch (ThreadInterruptedException)
                 {
@@ -145,13 +142,14 @@ namespace EtsyPromotion.KeywordPromotion
                     Debug.Assert(false);
                 }
             });
-            m_workerThread.Start();
+
+            m_promotionThread.Start();
         }
 
         // index of window settings
         private int m_windowIndex;
         private BindingList<ProductsListItem> m_productsList = new BindingList<ProductsListItem>();
-        private Thread m_workerThread;
+        private Thread m_promotionThread;
         private Action m_onFormClosedCallBack;
     }
 
