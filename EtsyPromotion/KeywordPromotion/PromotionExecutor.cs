@@ -22,16 +22,22 @@ namespace EtsyPromotion.KeywordPromotion
             for (int index = 0; index < productsList.Count; ++index)
             {
                 var productInfo = productsList[index];
-                if (productInfo.ItemAction == ListingActionDetails.ListingAction.Skip ||
-                    string.IsNullOrEmpty(productInfo.Link))
+                if (productInfo.ItemAction == ListingActionDetails.ListingAction.Skip)
                     continue;
 
-                bool failed = false;
-                var keyWordsArray = productInfo.KeyWords.Split(';');
-                if (!keyWordsArray.Any())
+                List<string> keyWordsArray = null;
+                if (string.IsNullOrEmpty(productInfo.KeyWords))
                 {
-                    failed = true;
-                    AddErrorMessage($"Не удалось получить список ключевых слов из '{productInfo.KeyWords}'(номер в таблице {index + 1}), проверьте формат у элемента '{productInfo.KeyWords}'.");
+                    AddErrorMessage($"Не задан список ключевых слов для элемента с номером {index + 1}.");
+                }
+                else
+                {
+                    keyWordsArray = productInfo.KeyWords.Split(';').ToList();
+                    if (!keyWordsArray.Any())
+                    {
+                        keyWordsArray = null;
+                        AddErrorMessage($"Не удалось получить список ключевых слов из '{productInfo.KeyWords}'(номер в таблице {index + 1}), проверьте формат у элемента '{productInfo.KeyWords}'.");
+                    }
                 }
 
                 string listingID = null;
@@ -43,13 +49,12 @@ namespace EtsyPromotion.KeywordPromotion
                 }
                 catch (Exception exception)
                 {
-                    failed = true;
                     AddErrorMessage(
                         $"Не удалось получить идентификатор из ссылки '{productInfo.Link}'(номер в таблице {index + 1}), проверьте что ссылка у элемента '{productInfo.KeyWords} валидна и её формат https://www.etsy.com/listing/123123123/...\n\n" +
                         exception.ToString());
                 }
 
-                if (!failed)
+                if (keyWordsArray != null && !string.IsNullOrEmpty(listingID))
                     m_promotionInfo.Add(new PromotionInfo
                     {
                         m_addToCard = productInfo.ItemAction == ListingActionDetails.ListingAction.AddToCard,

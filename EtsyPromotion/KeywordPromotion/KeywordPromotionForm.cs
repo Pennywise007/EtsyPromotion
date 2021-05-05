@@ -30,7 +30,7 @@ namespace EtsyPromotion.KeywordPromotion
 
         private void KeywordPromotion_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (m_promotionThread != null &&
+            if (m_promotionThread != null && m_promotionThread.IsAlive &&
                 MessageBox.Show("Если закрыть окно то продвижение указанных товаров приостановится, продолжить закрытие?",
                                 "Закрытие окна",
                                 MessageBoxButtons.YesNo) == DialogResult.No)
@@ -39,8 +39,18 @@ namespace EtsyPromotion.KeywordPromotion
 
         private void KeywordPromotion_FormClosed(object sender, FormClosedEventArgs e)
         {
-            m_promotionThread?.Interrupt();
-            m_promotionThread?.Join();
+            if (m_promotionThread != null && m_promotionThread.IsAlive)
+            {
+                try
+                {
+                    m_promotionThread?.Interrupt();
+                    m_promotionThread?.Join();
+                }
+                catch (Exception exception)
+                {
+                    Globals.HandleException(exception, "Ошибка прерывания потока");
+                }
+            }
 
             SaveSettingsToXML();
 
@@ -77,12 +87,12 @@ namespace EtsyPromotion.KeywordPromotion
 
         private void Button_StartPromotion_Click(object sender, EventArgs e)
         {
-            if (m_promotionThread != null)
+            if (m_promotionThread != null && m_promotionThread.IsAlive)
             {
-                m_promotionThread.Interrupt();
-
                 Button_StartPromotion.Enabled = false;
                 Button_StartPromotion.Text = "Прерываем продвижение...";
+
+                m_promotionThread.Interrupt();
                 return;
             }
 
@@ -137,9 +147,9 @@ namespace EtsyPromotion.KeywordPromotion
                 catch (ThreadInterruptedException)
                 {
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
-                    Debug.Assert(false);
+                    Globals.HandleException(exception, "Возникла критическая ошибка во время продвижения.");
                 }
             });
 
