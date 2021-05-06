@@ -42,7 +42,7 @@
             this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.keyWordsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dateLastAddDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dateLastPromotionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.PromotionList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).BeginInit();
@@ -129,7 +129,7 @@
             this.listingActionColumn,
             this.linkDataGridViewTextBoxColumn,
             this.keyWordsDataGridViewTextBoxColumn,
-            this.dateLastAddDataGridViewTextBoxColumn,
+            this.dateLastPromotionColumn,
             this.noteDataGridViewTextBoxColumn});
             this.PromotionList.DataSource = this.productsListDataSource;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -199,16 +199,16 @@
             this.keyWordsDataGridViewTextBoxColumn.HeaderText = "Ключевые слова(через ;)";
             this.keyWordsDataGridViewTextBoxColumn.Name = "keyWordsDataGridViewTextBoxColumn";
             this.keyWordsDataGridViewTextBoxColumn.ToolTipText = "Список ключевых слов по которым будет продвигаться товар(через ;)";
-            this.keyWordsDataGridViewTextBoxColumn.Width = 250;
+            this.keyWordsDataGridViewTextBoxColumn.Width = 240;
             // 
-            // dateLastAddDataGridViewTextBoxColumn
+            // dateLastPromotionColumn
             // 
-            this.dateLastAddDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.dateLastAddDataGridViewTextBoxColumn.DataPropertyName = "DateLastPromotion";
-            this.dateLastAddDataGridViewTextBoxColumn.HeaderText = "Последнее продвижение";
-            this.dateLastAddDataGridViewTextBoxColumn.Name = "dateLastAddDataGridViewTextBoxColumn";
-            this.dateLastAddDataGridViewTextBoxColumn.ToolTipText = "Дата последнего продвжения товара";
-            this.dateLastAddDataGridViewTextBoxColumn.Width = 125;
+            this.dateLastPromotionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dateLastPromotionColumn.DataPropertyName = "DateLastPromotion";
+            this.dateLastPromotionColumn.HeaderText = "Дата продвижения";
+            this.dateLastPromotionColumn.Name = "dateLastPromotionColumn";
+            this.dateLastPromotionColumn.ToolTipText = "Дата последнего продвижения товара";
+            this.dateLastPromotionColumn.Width = 110;
             // 
             // noteDataGridViewTextBoxColumn
             // 
@@ -217,7 +217,7 @@
             this.noteDataGridViewTextBoxColumn.FillWeight = 50F;
             this.noteDataGridViewTextBoxColumn.HeaderText = "Заметка";
             this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
-            this.noteDataGridViewTextBoxColumn.Width = 250;
+            this.noteDataGridViewTextBoxColumn.Width = 188;
             // 
             // KeywordPromotionForm
             // 
@@ -253,7 +253,7 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn listingActionColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn linkDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn keyWordsDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dateLastAddDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dateLastPromotionColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn noteDataGridViewTextBoxColumn;
     }
 }

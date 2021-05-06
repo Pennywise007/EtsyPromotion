@@ -23,6 +23,12 @@ namespace EtsyPromotion
             return By.XPath($"//{tag}[@{attributeName} = '{attributeValue}']");
         }
 
+        public static By PartOfValue(string attributeName, string partOfAttributeValue, string tag = "*")
+        {
+            return By.XPath($"//{tag}[contains(@{attributeName}, '{partOfAttributeValue}')]");
+        }
+
+        /// <exception cref="T:OpenQA.Selenium.StaleElementReferenceException">Thrown when the target element is no longer valid in the document DOM.</exception>
         public static bool IsAttributeExist(IWebElement elements, string attributeName)
         {
             return elements.GetAttribute(attributeName) != null;
@@ -61,6 +67,7 @@ namespace EtsyPromotion
 
         public IWebDriver m_driver;
 
+        /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public string IpLocation
         {
             get
@@ -71,6 +78,7 @@ namespace EtsyPromotion
             }
         }
 
+        /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public string Ip
         {
             get
@@ -90,6 +98,7 @@ namespace EtsyPromotion
             m_driver = new ChromeDriver(options);
         }
 
+        /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
         public void OpenNewTab(string newUrl)
         {
             if (m_driver.Url.Length == 0 || m_driver.Url == "data:,")
@@ -107,19 +116,53 @@ namespace EtsyPromotion
             m_driver.Navigate().GoToUrl(newUrl);
         }
 
+        /// <exception cref="T:WebDriverException">.</exception>
         public void OpenInNewTab(IWebElement element)
         {
-            //Actions action = new Actions(m_driver);
-            //action.SendKeys(element, Keys.Control + Keys.Shift + Keys.Enter);
+            List<string> previousWindows = m_driver.WindowHandles.ToList();
 
-            element.SendKeys(Keys.Control + Keys.Shift + Keys.Enter);
+            void SwitchToNewWindow()
+            {
+                ReadOnlyCollection<string> currentWindows = m_driver.WindowHandles;
+                foreach (var window in currentWindows)
+                {
+                    if (previousWindows.FindIndex(v => v == window) == -1)
+                    {
+                        m_driver.SwitchTo().Window(window);
+                        return;
+                    }
+                }
+            }
+
+            try
+            {
+                element.SendKeys(Keys.Control + Keys.Shift + Keys.Enter);
+                SwitchToNewWindow();
+            }
+            catch (WebDriverException)
+            {
+                try
+                {
+                    var linkElement = element.FindElement(By.TagName("a"));
+                    linkElement.SendKeys(Keys.Control + Keys.Shift + Keys.Enter);
+                    SwitchToNewWindow();
+
+                    return;
+                }
+                catch (WebDriverException)
+                {
+                }
+
+                throw;
+            }
         }
 
+        /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
         public void CloseCurrentTab()
         {
             Trace.Assert(m_driver.WindowHandles.Count > 0, "Нет вкладок для закрытия");
 
-            ((IJavaScriptExecutor)m_driver).ExecuteScript("window.close();");
+            m_driver.Close();
             m_driver.SwitchTo().Window(m_driver.WindowHandles.Last()); //switches to last opened tab
         }
 
@@ -138,36 +181,30 @@ namespace EtsyPromotion
                 actions.Perform();
                 return true;
             }
-            catch (Exception)
+            catch (ArgumentException)
             {
                 Debug.Assert(false);
             }
 
-            try
-            {
-                if (!element.Location.IsEmpty)
-                    return false;
+            if (element.Location.IsEmpty)
+                return false;
 
-                ScrollTo(element.Location.X, element.Location.Y);
-                return true;
-            }
-            catch (Exception)
-            {
-                Debug.Assert(false);
-            }
-
-            return false;
+            ScrollTo(element.Location.X, element.Location.Y);
+            return true;
         }
+
         public void ScrollTo(int xPosition = 0, int yPosition = 0)
         {
             ((IJavaScriptExecutor)m_driver).ExecuteScript($"window.scrollTo({xPosition}, {yPosition})");
         }
 
+        /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public IWebElement GetParentElement(IWebElement element)
         {
             return element.FindElement(By.XPath("./.."));
         }
 
+        /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         private void DetermineConnectionSettings()
         {
             OpenNewTab("https://2ip.ru/");
@@ -179,9 +216,13 @@ namespace EtsyPromotion
                 IWebElement ipElement = m_driver.FindElement(By.ClassName("ip"));
                 _ip = ipElement.Text;
             }
-            catch (Exception exception)
+            catch (StaleElementReferenceException exception)
             {
-                throw new Exception("Не удалось получить информацию о текущем положении c https://2ip.ru/. \n\n", exception);
+                throw new NoSuchElementException("Не удалось получить информацию о текущем положении c https://2ip.ru/. \n\n", exception);
+            }
+            catch (NoSuchElementException exception)
+            {
+                throw new NoSuchElementException("Не удалось получить информацию о текущем положении c https://2ip.ru/. \n\n", exception);
             }
             finally
             {

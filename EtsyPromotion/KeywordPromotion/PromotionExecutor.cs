@@ -49,6 +49,9 @@ namespace EtsyPromotion.KeywordPromotion
                 }
                 catch (Exception exception)
                 {
+                    if (!(exception is RegexMatchTimeoutException || exception is ArgumentException))
+                        throw;
+
                     AddErrorMessage(
                         $"Не удалось получить идентификатор из ссылки '{productInfo.Link}'(номер в таблице {index + 1}), проверьте что ссылка у элемента '{productInfo.KeyWords} валидна и её формат https://www.etsy.com/listing/123123123/...\n\n" +
                         exception.ToString());
@@ -95,6 +98,11 @@ namespace EtsyPromotion.KeywordPromotion
                     m_controller.SearchText(keyWord);
 
                     int currentPage = 0;
+#if DEBUG
+                    const int maxPageNumber = 3;
+#else
+                    const int maxPageNumber = 100;
+#endif
                     IWebElement productLink = null;
 
                     do
@@ -121,24 +129,26 @@ namespace EtsyPromotion.KeywordPromotion
                         catch (NoSuchElementException) {}
 
                         ScrollSearchResults(allResults, productLink);
-                    } while (productLink == null && currentPage < 100 && m_controller.OpenNextSearchPage(currentPage + 1));
+                    } while (productLink == null && currentPage < maxPageNumber && m_controller.OpenNextSearchPage(currentPage + 1));
 
                     if (productLink != null)
                     {
                         try
                         {
-                            productLink.Click();
+                            m_controller.OpenInNewTab(productLink);
+                            {
+                                m_controller.PreviewPhotos();
 
-                            m_controller.PreviewPhotos();
+                                m_controller.WatchComments();
 
-                            m_controller.WatchComments();
-
-                            if (productInfo.m_addToCard)
-                                m_controller.AddCurrentItemToCard();
+                                if (productInfo.m_addToCard)
+                                    m_controller.AddCurrentItemToCard();
+                            }
+                            m_controller.CloseCurrentTab();
 
                             m_onEndExecutionForElementByIndex(productInfo.m_elementIndexInProductsList);
                         }
-                        catch (Exception)
+                        catch (WebDriverException)
                         {
                             AddErrorMessage(
                                 $"Не удалось добавить товар с идентификатором {productInfo.m_listingId}(номер в таблице {productInfo.m_elementIndexInProductsList + 1}) в корзину.");
@@ -190,9 +200,9 @@ namespace EtsyPromotion.KeywordPromotion
             }
 
 #if DEBUG
-            const int waitingTimeMillisec = 10;
+            const int waitingTimeMilliseconds = 10;
 #else
-            const int waitingTimeMillisec = 1000;
+            const int waitingTimeMilliseconds = 1000;
 #endif
 
             for (int currentIndex = 0, maxIndex = stopIndex ?? allResults.Count;
@@ -200,14 +210,14 @@ namespace EtsyPromotion.KeywordPromotion
                 currentIndex += 7)
             {
                 if (m_controller.ScrollToElement(allResults[currentIndex]))
-                    Thread.Sleep(waitingTimeMillisec);
+                    Thread.Sleep(waitingTimeMilliseconds);
             }
 
-            if (stopIndex == null)
+            if (stopIndex == null || stopIndex == -1)
                 return;
 
             if (m_controller.ScrollToElement(allResults[stopIndex.Value]))
-                Thread.Sleep(waitingTimeMillisec);
+                Thread.Sleep(waitingTimeMilliseconds);
         }
 
         private class PromotionInfo
@@ -219,8 +229,8 @@ namespace EtsyPromotion.KeywordPromotion
         }
 
         private SearchController m_controller;
-        private List<PromotionInfo> m_promotionInfo = new List<PromotionInfo>();
-        private Action<int> m_onEndExecutionForElementByIndex;
+        private readonly List<PromotionInfo> m_promotionInfo = new List<PromotionInfo>();
+        private readonly Action<int> m_onEndExecutionForElementByIndex;
         private string m_errorMessage;
     }
 }

@@ -31,7 +31,7 @@ namespace EtsyPromotion
         }
 
         public ListingAction Action { get; set; }
-        public String Presentation { get; set; }
+        public string Presentation { get; set; }
 
         public static void SetupListingActionsToColumn(ref DataGridViewComboBoxColumn column)
         {

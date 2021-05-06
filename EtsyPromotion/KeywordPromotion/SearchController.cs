@@ -68,8 +68,15 @@ namespace EtsyPromotion.KeywordPromotion
                     pageGroup.Click();
                     return true;
                 }
-                catch (Exception)
+                catch (Exception exception)
                 {
+                    if (!(exception is RegexMatchTimeoutException ||
+                          exception is ArgumentException ||
+                          exception is FormatException ||
+                          exception is OverflowException ||
+                          exception is WebDriverException))
+                        throw;
+
                     Debug.Assert(false);
                 }
             }

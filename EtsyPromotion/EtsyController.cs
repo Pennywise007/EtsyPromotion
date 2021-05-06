@@ -13,6 +13,7 @@ namespace EtsyPromotion
 {
     class EtsyController : ChromeDriverHelper
     {
+        /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public void AddCurrentItemToCard()
         {
             IWebElement element = m_driver.FindElement(By.ClassName("add-to-cart-form"));
@@ -28,9 +29,10 @@ namespace EtsyPromotion
             IWebElement addedToCardCheck = wait.Until(driver => driver.FindElement(By.ClassName("proceed-to-checkout")));
 
             if (!addedToCardCheck.Displayed)
-                throw new Exception("Не удалось добавить в корзину.");
+                throw new NoSuchElementException("Не удалось добавить в корзину.");
         }
 
+        /// <exception cref="T:OpenQA.Selenium.WebDriverException">If no element matches the criteria.</exception>
         public void PreviewPhotos()
         {
             var random = new Random();
@@ -87,20 +89,10 @@ namespace EtsyPromotion
             }
         }
 
+        /// <exception cref="T:OpenQA.Selenium.WebDriverException">If no element matches the criteria.</exception>
         public void WatchComments()
         {
-            ISearchContext commentsGroupElement;
-
-            try
-            {
-                commentsGroupElement = m_driver.FindElement(ByAttribute.Name("data-reviews-container", "div"));
-            }
-            catch (NoSuchElementException)
-            {
-                return;
-            }
-
-            void ScrollAllCommentsOnPage()
+            void ScrollAllCommentsOnPage(ISearchContext commentsGroupElement)
             {
                 List<IWebElement> comments = commentsGroupElement.FindElements(By.ClassName("wt-grid__item-xs-12")).ToList();
                 if (!comments.Any())
@@ -113,7 +105,7 @@ namespace EtsyPromotion
                 }
             }
 
-            bool GoToNextPage()
+            bool GoToNextPage(ISearchContext commentsGroupElement)
             {
                 List<IWebElement> commentPagesAndForwardButtons = commentsGroupElement.FindElements(By.ClassName("wt-action-group__item-container")).ToList();
                 if (!commentPagesAndForwardButtons.Any())
@@ -128,16 +120,27 @@ namespace EtsyPromotion
 
             try
             {
+                ISearchContext commentsGroupElement;
+
                 for (var i = 0; i < 2; ++i)
                 {
-                    ScrollAllCommentsOnPage();
-                    if (!GoToNextPage())
+                    try
+                    {
+                        commentsGroupElement = m_driver.FindElement(ByAttribute.Name("data-reviews-container", "div"));
+                    }
+                    catch (NoSuchElementException)
+                    {
+                        return;
+                    }
+
+                    ScrollAllCommentsOnPage(commentsGroupElement);
+                    if (!GoToNextPage(commentsGroupElement))
                         break;
 
                     Thread.Sleep(3000);
                 }
             }
-            catch (Exception)
+            catch (WebDriverException)
             {
             }
         }
@@ -224,6 +227,7 @@ namespace EtsyPromotion
             return new List<IWebElement>();
         }
 
+        /// <exception cref="T:OpenQA.Selenium.NotFoundException">If no element matches the criteria.</exception>
         public string GetEtsyUserLocation()
         {
             try
@@ -245,7 +249,16 @@ namespace EtsyPromotion
             prevPicture = nextPicture = null;
             try
             {
-                ISearchContext buttonsContext = m_driver.FindElement(By.ClassName("listing-page-image-carousel-component")) ?? (ISearchContext)m_driver;
+                ISearchContext buttonsContext = (ISearchContext)m_driver;
+                try
+                {
+                    // wait for adding to card
+                    var wait = new WebDriverWait(m_driver, TimeSpan.FromSeconds(3));
+                    //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
+
+                    buttonsContext = wait.Until(driver => m_driver.FindElement(By.ClassName("listing-page-image-carousel-component")));
+                }
+                catch (NoSuchElementException) {}
 
                 List<IWebElement> navigatorButtons = buttonsContext.FindElements(ByAttribute.Name("data-carousel-nav-button", "button")).ToList();
 
@@ -275,7 +288,7 @@ namespace EtsyPromotion
                     Trace.Assert(false, "У кнопок навигации не известные значения у атрибута data-direction");
                 }
             }
-            catch (Exception)
+            catch (WebDriverException)
             {
             }
 
@@ -297,7 +310,7 @@ namespace EtsyPromotion
                     {
                         _videoImage = ByAttribute.IsAttributeExist(m_imageElement, "data-carousel-thumbnail-video");
                     }
-                    catch (Exception)
+                    catch (StaleElementReferenceException)
                     {
                         _videoImage = false;
                     }
@@ -320,7 +333,7 @@ namespace EtsyPromotion
                     m_imageElement = element
                 }).ToList();
             }
-            catch (Exception)
+            catch (NoSuchElementException)
             {
             }
 

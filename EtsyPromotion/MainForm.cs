@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
 using MetroFramework.Forms;
+using OpenQA.Selenium;
 using EtsyPromotion.KeywordPromotion;
 
 namespace EtsyPromotion.MainForm
@@ -94,7 +95,7 @@ namespace EtsyPromotion.MainForm
             {
                 etsyUserLocation = etsyController.GetEtsyUserLocation();
             }
-            catch (Exception exception)
+            catch (NotFoundException exception)
             {
                 Globals.HandleException(exception, "Ошибка при получении местоположения");
             }
@@ -152,9 +153,9 @@ namespace EtsyPromotion.MainForm
                             etsyController = new EtsyController();
                             etsyController.m_driver.Manage().Window.Maximize();
                         }
-                        catch (Exception exception)
+                        catch (WebDriverException exception)
                         {
-                            throw new Exception("Не удалось создать драйвер для управления хромом.", exception);
+                            throw new WebDriverException("Не удалось создать драйвер для управления хромом.", exception);
                         }
                     }
 
@@ -162,7 +163,7 @@ namespace EtsyPromotion.MainForm
                     {
                         etsyController.OpenNewTab(linkInfo.Link);
                     }
-                    catch (Exception exception)
+                    catch (NoSuchWindowException exception)
                     {
                         SetForeground();
                         Globals.HandleException(exception,
@@ -185,7 +186,7 @@ namespace EtsyPromotion.MainForm
 
                         ++successfullyAddedToCard;
                     }
-                    catch (Exception exception)
+                    catch (WebDriverException exception)
                     {
                         SetForeground();
                         Globals.HandleException(exception,
@@ -225,7 +226,7 @@ namespace EtsyPromotion.MainForm
                     {
                         Process.Start(m_list[e.RowIndex].Link);
                     }
-                    catch (Exception exception)
+                    catch (SystemException exception)
                     {
                         Globals.HandleException(exception, "Не удалось перейти по ссылке");
                     }

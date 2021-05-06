@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Security;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -46,7 +47,7 @@ namespace EtsyPromotion.KeywordPromotion
                     m_promotionThread?.Interrupt();
                     m_promotionThread?.Join();
                 }
-                catch (Exception exception)
+                catch (SystemException exception)
                 {
                     Globals.HandleException(exception, "Ошибка прерывания потока");
                 }
@@ -140,7 +141,7 @@ namespace EtsyPromotion.KeywordPromotion
                         Debug.Assert(false);
                     }
 
-                    promotion.Dispose();
+                    promotion?.Dispose();
 
                     OnEndExecution();
                 }
@@ -157,10 +158,10 @@ namespace EtsyPromotion.KeywordPromotion
         }
 
         // index of window settings
-        private int m_windowIndex;
+        private readonly int m_windowIndex;
         private BindingList<ProductsListItem> m_productsList = new BindingList<ProductsListItem>();
         private Thread m_promotionThread;
-        private Action m_onFormClosedCallBack;
+        private readonly Action m_onFormClosedCallBack;
     }
 
     public class ProductsListItem
