@@ -7,13 +7,13 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using OpenQA.Selenium;
 
-namespace EtsyPromotion.KeywordPromotion
+namespace EtsyPromotion.WebDriver
 {
     class SearchController : EtsyController
     {
         public void SearchText(string text)
         {
-            IWebElement mainSearchField = m_driver.FindElement(ByAttribute.Value("id", "global-enhancements-search-query", "input"));
+            IWebElement mainSearchField = Driver.FindElement(ByAttribute.Value("id", "global-enhancements-search-query", "input"));
 
             mainSearchField.Clear();
 
@@ -37,7 +37,7 @@ namespace EtsyPromotion.KeywordPromotion
             ISearchContext searchPagesGroup;
             try
             {
-                searchPagesGroup = m_driver.FindElement(ByAttribute.Name("data-search-pagination", "div"));
+                searchPagesGroup = Driver.FindElement(ByAttribute.Name("data-search-pagination", "div"));
             }
             catch (NoSuchElementException)
             {
@@ -86,7 +86,7 @@ namespace EtsyPromotion.KeywordPromotion
 
         private ISearchContext GetSearchResultContext()
         {
-            ISearchContext allResultsTable = m_driver;
+            ISearchContext allResultsTable = Driver;
 
             try
             {
@@ -102,6 +102,5 @@ namespace EtsyPromotion.KeywordPromotion
 
             return allResultsTable;
         }
-
     }
 }

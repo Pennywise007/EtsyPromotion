@@ -1,4 +1,4 @@
-﻿namespace EtsyPromotion.KeywordPromotion
+﻿namespace EtsyPromotion.UI
 {
     partial class KeywordPromotionForm
     {
@@ -173,7 +173,7 @@
             // 
             // productsListDataSource
             // 
-            this.productsListDataSource.DataSource = typeof(EtsyPromotion.KeywordPromotion.ProductsListItem);
+            this.productsListDataSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.KeyWordsListingInfo);
             // 
             // listingActionColumn
             // 

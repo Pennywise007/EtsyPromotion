@@ -9,7 +9,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 
-namespace EtsyPromotion
+namespace EtsyPromotion.WebDriver
 {
     class ByAttribute
     {
@@ -60,12 +60,12 @@ namespace EtsyPromotion
             return elementLink;
         }
     }
-    class ChromeDriverHelper
+    class WebDriverHelper
     {
         private string _ip;
         private string _ipLocation;
 
-        public IWebDriver m_driver;
+        public IWebDriver Driver;
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public string IpLocation
@@ -89,46 +89,46 @@ namespace EtsyPromotion
             }
         }
 
-        public ChromeDriverHelper()
+        public WebDriverHelper()
         {
             // start new chrome as incognito
             var options = new ChromeOptions();
             //options.AddArguments("--incognito");
 
-            m_driver = new ChromeDriver(options);
+            Driver = new ChromeDriver(options);
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
         public void OpenNewTab(string newUrl)
         {
-            if (m_driver.Url.Length == 0 || m_driver.Url == "data:,")
+            if (Driver.Url.Length == 0 || Driver.Url == "data:,")
             {
-                m_driver.Url = newUrl;
+                Driver.Url = newUrl;
                 return;
             }
 
-            var windowsCount = m_driver.WindowHandles.Count();
-            ((IJavaScriptExecutor)m_driver).ExecuteScript("window.open();");
+            var windowsCount = Driver.WindowHandles.Count();
+            ((IJavaScriptExecutor)Driver).ExecuteScript("window.open();");
 
-            Trace.Assert(windowsCount < m_driver.WindowHandles.Count(), "Не удалось открыть новую вкладку!");
+            Trace.Assert(windowsCount < Driver.WindowHandles.Count(), "Не удалось открыть новую вкладку!");
 
-            m_driver.SwitchTo().Window(m_driver.WindowHandles.Last()); //switches to new tab
-            m_driver.Navigate().GoToUrl(newUrl);
+            Driver.SwitchTo().Window(Driver.WindowHandles.Last()); //switches to new tab
+            Driver.Navigate().GoToUrl(newUrl);
         }
 
         /// <exception cref="T:WebDriverException">.</exception>
         public void OpenInNewTab(IWebElement element)
         {
-            List<string> previousWindows = m_driver.WindowHandles.ToList();
+            List<string> previousWindows = Driver.WindowHandles.ToList();
 
             void SwitchToNewWindow()
             {
-                ReadOnlyCollection<string> currentWindows = m_driver.WindowHandles;
+                ReadOnlyCollection<string> currentWindows = Driver.WindowHandles;
                 foreach (var window in currentWindows)
                 {
                     if (previousWindows.FindIndex(v => v == window) == -1)
                     {
-                        m_driver.SwitchTo().Window(window);
+                        Driver.SwitchTo().Window(window);
                         return;
                     }
                 }
@@ -160,15 +160,19 @@ namespace EtsyPromotion
         /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
         public void CloseCurrentTab()
         {
-            Trace.Assert(m_driver.WindowHandles.Count > 0, "Нет вкладок для закрытия");
+            Trace.Assert(Driver.WindowHandles.Count > 0, "Нет вкладок для закрытия");
 
-            m_driver.Close();
-            m_driver.SwitchTo().Window(m_driver.WindowHandles.Last()); //switches to last opened tab
+            bool lastOpenedTab = Driver.WindowHandles.Count <= 1;
+
+            Driver.Close();
+
+            if (!lastOpenedTab)
+                Driver.SwitchTo().Window(Driver.WindowHandles.Last()); //switches to last opened tab
         }
 
         public void Back()
         {
-            ((IJavaScriptExecutor)m_driver).ExecuteScript("window.history.go(-1);");
+            ((IJavaScriptExecutor)Driver).ExecuteScript("window.history.go(-1);");
         }
 
         public bool ScrollToElement(IWebElement element)
@@ -176,7 +180,7 @@ namespace EtsyPromotion
             Trace.Assert(element != null);
             try
             {
-                Actions actions = new Actions(m_driver);
+                Actions actions = new Actions(Driver);
                 actions.MoveToElement(element);
                 actions.Perform();
                 return true;
@@ -195,7 +199,7 @@ namespace EtsyPromotion
 
         public void ScrollTo(int xPosition = 0, int yPosition = 0)
         {
-            ((IJavaScriptExecutor)m_driver).ExecuteScript($"window.scrollTo({xPosition}, {yPosition})");
+            ((IJavaScriptExecutor)Driver).ExecuteScript($"window.scrollTo({xPosition}, {yPosition})");
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
@@ -210,10 +214,10 @@ namespace EtsyPromotion
             OpenNewTab("https://2ip.ru/");
             try
             {
-                IWebElement locationElement = m_driver.FindElement(By.ClassName("value-country"));
+                IWebElement locationElement = Driver.FindElement(By.ClassName("value-country"));
                 _ipLocation = locationElement.Text;
 
-                IWebElement ipElement = m_driver.FindElement(By.ClassName("ip"));
+                IWebElement ipElement = Driver.FindElement(By.ClassName("ip"));
                 _ip = ipElement.Text;
             }
             catch (StaleElementReferenceException exception)

@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using System.Windows.Forms;
+using EtsyPromotion.UI;
+using EtsyPromotion.Promotion.Interfaces;
+using EtsyPromotion.Promotion.Implementation;
+
 
 namespace EtsyPromotion
 {
@@ -16,7 +21,23 @@ namespace EtsyPromotion
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm.MainForm());
+            Application.Run(BuildServiceProvider().GetRequiredService<MainForm>());
+        }
+
+        /// <summary>
+        /// Composition root.
+        /// </summary>
+        private static IServiceProvider BuildServiceProvider()
+        {
+            var serviceCollection = new ServiceCollection();
+
+            serviceCollection.AddScoped<MainForm>();
+            serviceCollection.AddTransient<IListingPromotionWorker, ListingPromotionWorker>();
+
+            serviceCollection.AddTransient<IKeyWordPromotionForm, KeywordPromotionForm>();
+            serviceCollection.AddTransient<IKeyWordPromotionWorker, KeyWordPromotionWorker>();
+
+            return serviceCollection.BuildServiceProvider();
         }
     }
 }

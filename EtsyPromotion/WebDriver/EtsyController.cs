@@ -9,14 +9,14 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
-namespace EtsyPromotion
+namespace EtsyPromotion.WebDriver
 {
-    class EtsyController : ChromeDriverHelper
+    class EtsyController : WebDriverHelper
     {
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public void AddCurrentItemToCard()
         {
-            IWebElement element = m_driver.FindElement(By.ClassName("add-to-cart-form"));
+            IWebElement element = Driver.FindElement(By.ClassName("add-to-cart-form"));
             ScrollToElement(element);
 
             Thread.Sleep(1300);
@@ -24,7 +24,7 @@ namespace EtsyPromotion
             element.Click();
 
             // wait for adding to card
-            var wait = new WebDriverWait(m_driver, TimeSpan.FromSeconds(10));
+            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
             //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
             IWebElement addedToCardCheck = wait.Until(driver => driver.FindElement(By.ClassName("proceed-to-checkout")));
 
@@ -39,6 +39,10 @@ namespace EtsyPromotion
             void Wait(bool waitVideo = false)
             {
                 int minimumWaitingMillisecondSpan = waitVideo ? 9000 : 2000;
+#if DEBUG
+                minimumWaitingMillisecondSpan /= 3;
+#endif
+
                 Thread.Sleep(TimeSpan.FromMilliseconds(random.Next(minimumWaitingMillisecondSpan, minimumWaitingMillisecondSpan + 3000)));
             }
 
@@ -83,7 +87,7 @@ namespace EtsyPromotion
 
                 // смотрим видео которое не посмотрели
                 PreviewImages videoImage = getPreviewImagesList.Find(image => image.IsVideo);
-                videoImage.m_imageElement.Click();
+                videoImage.ImageElement.Click();
 
                 Wait(true);
             }
@@ -120,13 +124,12 @@ namespace EtsyPromotion
 
             try
             {
-                ISearchContext commentsGroupElement;
-
                 for (var i = 0; i < 2; ++i)
                 {
+                    ISearchContext commentsGroupElement;
                     try
                     {
-                        commentsGroupElement = m_driver.FindElement(ByAttribute.Name("data-reviews-container", "div"));
+                        commentsGroupElement = Driver.FindElement(ByAttribute.Name("data-reviews-container", "div"));
                     }
                     catch (NoSuchElementException)
                     {
@@ -147,11 +150,11 @@ namespace EtsyPromotion
 
         public List<IWebElement> GetSuggestionsFromThisShop()
         {
-            ISearchContext shopSuggestionsGroupElement = m_driver;
+            ISearchContext shopSuggestionsGroupElement = Driver;
 
             try
             {
-                shopSuggestionsGroupElement = m_driver.FindElement(By.ClassName("other-info"));
+                shopSuggestionsGroupElement = Driver.FindElement(By.ClassName("other-info"));
             }
             catch (NoSuchElementException) {}
 
@@ -172,7 +175,7 @@ namespace EtsyPromotion
             }
         }
 
-
+        // Debug finction
         private List<IWebElement> findCollection(ISearchContext context, string name)
         {
             IReadOnlyCollection<IWebElement> classSelector = context.FindElements(By.ClassName(name));
@@ -230,18 +233,11 @@ namespace EtsyPromotion
         /// <exception cref="T:OpenQA.Selenium.NotFoundException">If no element matches the criteria.</exception>
         public string GetEtsyUserLocation()
         {
-            try
-            {
-                OpenNewTab("https://www.etsy.com/");
+            OpenNewTab("https://www.etsy.com/");
 
-                IWebElement locationElement = m_driver.FindElement(By.ClassName("footer-redesign")).FindElements(By.ClassName("wt-display-inline-block"))[1];
-                // result like   Россия   |   Русский   |   $ (USD), take first
-                return locationElement.Text.Split('|').First().Trim();
-            }
-            finally
-            {
-                CloseCurrentTab();
-            }
+            IWebElement locationElement = Driver.FindElement(By.ClassName("footer-redesign")).FindElements(By.ClassName("wt-display-inline-block"))[1];
+            // result like   Россия   |   Русский   |   $ (USD), take first
+            return locationElement.Text.Split('|').First().Trim();
         }
 
         private bool GetNavigatorButtons(out IWebElement prevPicture, out IWebElement nextPicture)
@@ -249,14 +245,14 @@ namespace EtsyPromotion
             prevPicture = nextPicture = null;
             try
             {
-                ISearchContext buttonsContext = (ISearchContext)m_driver;
+                ISearchContext buttonsContext = (ISearchContext)Driver;
                 try
                 {
                     // wait for adding to card
-                    var wait = new WebDriverWait(m_driver, TimeSpan.FromSeconds(3));
+                    var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(3));
                     //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
 
-                    buttonsContext = wait.Until(driver => m_driver.FindElement(By.ClassName("listing-page-image-carousel-component")));
+                    buttonsContext = wait.Until(driver => Driver.FindElement(By.ClassName("listing-page-image-carousel-component")));
                 }
                 catch (NoSuchElementException) {}
 
@@ -297,7 +293,7 @@ namespace EtsyPromotion
 
         private struct PreviewImages
         {
-            public IWebElement m_imageElement;
+            public IWebElement ImageElement;
 
             private bool? _videoImage;
             public bool IsVideo
@@ -308,7 +304,7 @@ namespace EtsyPromotion
 
                     try
                     {
-                        _videoImage = ByAttribute.IsAttributeExist(m_imageElement, "data-carousel-thumbnail-video");
+                        _videoImage = ByAttribute.IsAttributeExist(ImageElement, "data-carousel-thumbnail-video");
                     }
                     catch (StaleElementReferenceException)
                     {
@@ -324,13 +320,13 @@ namespace EtsyPromotion
         {
             try
             {
-                ISearchContext buttonsContext = m_driver.FindElement(By.ClassName("listing-page-image-carousel-component")) ?? (ISearchContext)m_driver;
+                ISearchContext buttonsContext = Driver.FindElement(By.ClassName("listing-page-image-carousel-component")) ?? (ISearchContext)Driver;
 
                 ReadOnlyCollection<IWebElement> images = buttonsContext.FindElements(ByAttribute.Name("data-carousel-pagination-item", "li"));
 
                 return images.Select(element => new PreviewImages
                 {
-                    m_imageElement = element
+                    ImageElement = element
                 }).ToList();
             }
             catch (NoSuchElementException)

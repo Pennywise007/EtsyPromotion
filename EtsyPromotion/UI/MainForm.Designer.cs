@@ -1,4 +1,4 @@
-﻿namespace EtsyPromotion.MainForm
+﻿namespace EtsyPromotion.UI
 {
     partial class MainForm
     {
@@ -41,7 +41,7 @@
             this.lastPromotionDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.Button_AddItemsToCard = new MetroFramework.Controls.MetroButton();
+            this.Button_RunPromotion = new MetroFramework.Controls.MetroButton();
             this.Button_CheckLocation = new MetroFramework.Controls.MetroButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.Button_KeyWordPromotion = new MetroFramework.Controls.MetroButton();
@@ -158,20 +158,20 @@
             // 
             // etsyLinkInfoBindingSource
             // 
-            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.MainForm.EtsyLinkInfo);
+            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.ListingInfo);
             // 
-            // Button_AddItemsToCard
+            // Button_RunPromotion
             // 
-            this.Button_AddItemsToCard.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.Button_RunPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button_AddItemsToCard.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Button_AddItemsToCard.Location = new System.Drawing.Point(10, 415);
-            this.Button_AddItemsToCard.Name = "Button_AddItemsToCard";
-            this.Button_AddItemsToCard.Size = new System.Drawing.Size(775, 40);
-            this.Button_AddItemsToCard.TabIndex = 2;
-            this.Button_AddItemsToCard.Text = "Добавить выбранные товары в корзину";
-            this.Button_AddItemsToCard.UseSelectable = true;
-            this.Button_AddItemsToCard.Click += new System.EventHandler(this.Button_AddItemsToCard_Click);
+            this.Button_RunPromotion.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.Button_RunPromotion.Location = new System.Drawing.Point(12, 415);
+            this.Button_RunPromotion.Name = "Button_RunPromotion";
+            this.Button_RunPromotion.Size = new System.Drawing.Size(776, 40);
+            this.Button_RunPromotion.TabIndex = 2;
+            this.Button_RunPromotion.Text = "Запустить продвижение";
+            this.Button_RunPromotion.UseSelectable = true;
+            this.Button_RunPromotion.Click += new System.EventHandler(this.Button_AddItemsToCard_Click);
             // 
             // Button_CheckLocation
             // 
@@ -240,7 +240,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
             this.ClientSize = new System.Drawing.Size(797, 530);
-            this.Controls.Add(this.Button_AddItemsToCard);
+            this.Controls.Add(this.Button_RunPromotion);
             this.Controls.Add(this.CurrentIP);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.ItemsTable);
@@ -265,7 +265,7 @@
         #endregion
 
         private MetroFramework.Controls.MetroGrid ItemsTable;
-        private MetroFramework.Controls.MetroButton Button_AddItemsToCard;
+        private MetroFramework.Controls.MetroButton Button_RunPromotion;
         private MetroFramework.Controls.MetroButton Button_CheckLocation;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private MetroFramework.Controls.MetroLink CurrentIP;
