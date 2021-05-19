@@ -11,7 +11,7 @@ using OpenQA.Selenium.Interactions;
 
 namespace EtsyPromotion.WebDriver
 {
-    class ByAttribute
+    static class ByAttribute
     {
         public static By Name(string attributeName, string tag = "*")
         {
@@ -35,7 +35,7 @@ namespace EtsyPromotion.WebDriver
         }
     }
 
-    class ByLink
+    static class ByLink
     {
         public static string GetElementLink(IWebElement elements)
         {
@@ -60,12 +60,20 @@ namespace EtsyPromotion.WebDriver
             return elementLink;
         }
     }
-    class WebDriverHelper
+
+    abstract class WebDriverHelper
     {
         private string _ip;
         private string _ipLocation;
+        private IWebDriver _driver;
 
-        public IWebDriver Driver;
+        public IWebDriver Driver
+        {
+            get => _driver ?? (_driver = CreateWebDriver());
+            set => _driver = value;
+        }
+
+        protected abstract IWebDriver CreateWebDriver();
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public string IpLocation
@@ -87,15 +95,6 @@ namespace EtsyPromotion.WebDriver
                     DetermineConnectionSettings();
                 return _ip;
             }
-        }
-
-        public WebDriverHelper()
-        {
-            // start new chrome as incognito
-            var options = new ChromeOptions();
-            //options.AddArguments("--incognito");
-
-            Driver = new ChromeDriver(options);
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>

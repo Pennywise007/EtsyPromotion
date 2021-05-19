@@ -13,6 +13,15 @@ namespace EtsyPromotion.WebDriver
 {
     class EtsyController : WebDriverHelper
     {
+        protected override IWebDriver CreateWebDriver()
+        {
+            // start new chrome as incognito
+            var options = new ChromeOptions();
+            //options.AddArguments("--incognito");
+
+            return new ChromeDriver(options);
+        }
+
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public void AddCurrentItemToCard()
         {

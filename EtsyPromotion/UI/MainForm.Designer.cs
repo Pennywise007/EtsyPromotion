@@ -35,23 +35,24 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.ItemsTable = new MetroFramework.Controls.MetroGrid();
-            this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.openLinkColumn = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.lastPromotionDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.Button_RunPromotion = new MetroFramework.Controls.MetroButton();
             this.Button_CheckLocation = new MetroFramework.Controls.MetroButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.Button_KeyWordPromotion = new MetroFramework.Controls.MetroButton();
             this.CurrentIP = new MetroFramework.Controls.MetroLink();
+            this.openLinkColumn = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.PromotionStatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lastPromotionDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ItemsTable)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.etsyLinkInfoBindingSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.etsyLinkInfoBindingSource)).BeginInit();
             this.SuspendLayout();
             // 
             // ItemsTable
@@ -81,7 +82,8 @@
             this.linkDataGridViewTextBoxColumn,
             this.openLinkColumn,
             this.lastPromotionDateColumn,
-            this.noteDataGridViewTextBoxColumn});
+            this.noteDataGridViewTextBoxColumn,
+            this.PromotionStatusColumn});
             this.ItemsTable.DataSource = this.etsyLinkInfoBindingSource;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
@@ -110,55 +112,6 @@
             this.ItemsTable.Size = new System.Drawing.Size(776, 348);
             this.ItemsTable.TabIndex = 0;
             this.ItemsTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ItemsTable_CellContentClick);
-            // 
-            // listingActionColumn
-            // 
-            this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.listingActionColumn.DataPropertyName = "ItemAction";
-            this.listingActionColumn.FillWeight = 75F;
-            this.listingActionColumn.HeaderText = "Действие";
-            this.listingActionColumn.Name = "listingActionColumn";
-            this.listingActionColumn.Width = 160;
-            // 
-            // linkDataGridViewTextBoxColumn
-            // 
-            this.linkDataGridViewTextBoxColumn.DataPropertyName = "Link";
-            this.linkDataGridViewTextBoxColumn.FillWeight = 54.90196F;
-            this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
-            this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
-            // 
-            // openLinkColumn
-            // 
-            this.openLinkColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.openLinkColumn.FillWeight = 75F;
-            this.openLinkColumn.HeaderText = "Перейти по ссылке";
-            this.openLinkColumn.Name = "openLinkColumn";
-            this.openLinkColumn.Text = "Открыть";
-            this.openLinkColumn.ToolTipText = "Открыть в браузере ссылку на товар";
-            this.openLinkColumn.UseColumnTextForButtonValue = true;
-            this.openLinkColumn.Width = 70;
-            // 
-            // lastPromotionDateColumn
-            // 
-            this.lastPromotionDateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.lastPromotionDateColumn.DataPropertyName = "DateLastPromotion";
-            this.lastPromotionDateColumn.FillWeight = 153.1002F;
-            this.lastPromotionDateColumn.HeaderText = "Последнее продвижение";
-            this.lastPromotionDateColumn.Name = "lastPromotionDateColumn";
-            this.lastPromotionDateColumn.ToolTipText = "Дата последнего продвижения товара";
-            this.lastPromotionDateColumn.Width = 125;
-            // 
-            // noteDataGridViewTextBoxColumn
-            // 
-            this.noteDataGridViewTextBoxColumn.DataPropertyName = "Note";
-            this.noteDataGridViewTextBoxColumn.FillWeight = 28.35188F;
-            this.noteDataGridViewTextBoxColumn.HeaderText = "Заметка";
-            this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
-            this.noteDataGridViewTextBoxColumn.ToolTipText = "Любая заметка об этом элементе";
-            // 
-            // etsyLinkInfoBindingSource
-            // 
-            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.ListingInfo);
             // 
             // Button_RunPromotion
             // 
@@ -234,6 +187,63 @@
             this.CurrentIP.UseSelectable = true;
             this.CurrentIP.Click += new System.EventHandler(this.CurrentIP_Click);
             // 
+            // openLinkColumn
+            // 
+            this.openLinkColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.openLinkColumn.FillWeight = 75F;
+            this.openLinkColumn.HeaderText = "Перейти по ссылке";
+            this.openLinkColumn.Name = "openLinkColumn";
+            this.openLinkColumn.Text = "Открыть";
+            this.openLinkColumn.ToolTipText = "Открыть в браузере ссылку на товар";
+            this.openLinkColumn.UseColumnTextForButtonValue = true;
+            this.openLinkColumn.Width = 70;
+            // 
+            // PromotionStatusColumn
+            // 
+            this.PromotionStatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.PromotionStatusColumn.Description = "Состояние каждого листинга";
+            this.PromotionStatusColumn.HeaderText = "Статус";
+            this.PromotionStatusColumn.Name = "PromotionStatusColumn";
+            this.PromotionStatusColumn.Width = 45;
+            // 
+            // listingActionColumn
+            // 
+            this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.listingActionColumn.DataPropertyName = "ItemAction";
+            this.listingActionColumn.FillWeight = 75F;
+            this.listingActionColumn.HeaderText = "Действие";
+            this.listingActionColumn.Name = "listingActionColumn";
+            this.listingActionColumn.Width = 160;
+            // 
+            // linkDataGridViewTextBoxColumn
+            // 
+            this.linkDataGridViewTextBoxColumn.DataPropertyName = "Link";
+            this.linkDataGridViewTextBoxColumn.FillWeight = 54.90196F;
+            this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
+            this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
+            // 
+            // lastPromotionDateColumn
+            // 
+            this.lastPromotionDateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.lastPromotionDateColumn.DataPropertyName = "DateLastPromotion";
+            this.lastPromotionDateColumn.FillWeight = 153.1002F;
+            this.lastPromotionDateColumn.HeaderText = "Последнее продвижение";
+            this.lastPromotionDateColumn.Name = "lastPromotionDateColumn";
+            this.lastPromotionDateColumn.ToolTipText = "Дата последнего продвижения товара";
+            this.lastPromotionDateColumn.Width = 125;
+            // 
+            // noteDataGridViewTextBoxColumn
+            // 
+            this.noteDataGridViewTextBoxColumn.DataPropertyName = "Note";
+            this.noteDataGridViewTextBoxColumn.FillWeight = 28.35188F;
+            this.noteDataGridViewTextBoxColumn.HeaderText = "Заметка";
+            this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
+            this.noteDataGridViewTextBoxColumn.ToolTipText = "Любая заметка об этом элементе";
+            // 
+            // etsyLinkInfoBindingSource
+            // 
+            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.ListingInfo);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,11 +262,11 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ItemsTable)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.etsyLinkInfoBindingSource)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.etsyLinkInfoBindingSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -276,6 +286,7 @@
         private System.Windows.Forms.DataGridViewButtonColumn openLinkColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn lastPromotionDateColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn noteDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewImageColumn PromotionStatusColumn;
     }
 }
 

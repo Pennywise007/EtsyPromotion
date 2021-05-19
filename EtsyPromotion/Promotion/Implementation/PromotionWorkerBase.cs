@@ -37,7 +37,7 @@ namespace EtsyPromotion.Promotion.Implementation
         public event Func<int, bool> OnSuccessfullyPromoted;
 
         /// <summary> Finishing promotion on listing by index </summary>
-        public event EventHandler<int> WhenFinishListingPromotion;
+        public event EventHandler<PromotionDone> WhenFinishListingPromotion;
 
         /// <summary> An error occurred during th e listing promotion </summary>
         public event EventHandler<ErrorDuringListingPromotion> WhenErrorDuringListingPromotion;
@@ -132,7 +132,7 @@ namespace EtsyPromotion.Promotion.Implementation
         protected void OnSuccessfullyPromotedListing(int listingIndex)
         {
             ++_countSuccessfullyPromotedListings;
-            WhenFinishListingPromotion?.Invoke(this, listingIndex);
+            WhenFinishListingPromotion?.Invoke(this, new PromotionDone(listingIndex));
         }
 
         protected void OnException(Exception exception)
@@ -212,7 +212,7 @@ namespace EtsyPromotion.Promotion.Implementation
                 {
                     failed = true;
                     OnErrorDuringPromotion(listingIndex,
-                        $"Возникла ошибка при добавлении товара в корзину, возможно у товара есть несколько вариантов добавления в корзину, обратитесь к администратору.\n\n {exception}");
+                        $"Возникла ошибка при добавлении товара в корзину, возможно товара нет в корзине или у него есть несколько вариантов добавления в корзину, обратитесь к администратору.\n\n {exception}");
                 }
             }
 

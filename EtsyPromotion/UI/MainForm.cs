@@ -25,6 +25,8 @@ namespace EtsyPromotion.UI
     public partial class MainForm : MetroForm
     {
         private Settings _settings = new Settings();
+        private readonly PromotionTableStatusManager<ListingInfo> _statusManager;
+
         private readonly List<string> _listIPs = new List<string>();
         private readonly SortedDictionary<int, IKeyWordPromotionForm> _keyWordPromotionWindows = new SortedDictionary<int, IKeyWordPromotionForm>();
 
@@ -50,6 +52,9 @@ namespace EtsyPromotion.UI
                 DataSource = _settings.ListingsList,
                 AllowNew = true
             };
+
+            _statusManager = new PromotionTableStatusManager<ListingInfo>(_listingPromotionWorker, ItemsTable,
+                                                                          listingActionColumn, PromotionStatusColumn);
         }
 
         /// <summary>
@@ -61,7 +66,6 @@ namespace EtsyPromotion.UI
             _listingPromotionWorker.WhenFinish += OnFinishPromotion;
             _listingPromotionWorker.WhenException += OnException;
             _listingPromotionWorker.WhenFinishListingPromotion += OnFinishListingPromotion;
-            _listingPromotionWorker.WhenErrorDuringListingPromotion += OnErrorDuringListingPromotion;
             _listingPromotionWorker.OnSuccessfullyPromoted += OnSuccessfullyPromoted;
         }
 
@@ -98,23 +102,12 @@ namespace EtsyPromotion.UI
             }));
         }
 
-        private void OnFinishListingPromotion(object sender, int listingIndex)
+        private void OnFinishListingPromotion(object sender, PromotionDone doneInfo)
         {
             Invoke(new MethodInvoker(() =>
             {
-                _settings.ListingsList[listingIndex].DateLastPromotion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                _settings.ListingsList[doneInfo.ElementIndex].DateLastPromotion = doneInfo.Date;
                 ItemsTable.Refresh();
-            }));
-        }
-
-        private void OnErrorDuringListingPromotion(object sender, ErrorDuringListingPromotion errorInfo)
-        {
-            Invoke(new MethodInvoker(() =>
-            {
-                // _productsList[listingIndex].DateLastPromotion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-                // PromotionList.Refresh();
-
-                // TODO add HANDLER
             }));
         }
 
@@ -124,6 +117,7 @@ namespace EtsyPromotion.UI
 
             Invoke(new MethodInvoker(() =>
             {
+                SetForeground();
                 closeWindow = MessageBox.Show(this, $"Продвижение для {countPromotedElements} товаров было успешно. Закрыть открытые окна?",
                     "Продвижение завершено", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes;
 
@@ -287,6 +281,7 @@ namespace EtsyPromotion.UI
                 Button_RunPromotion.Text = "Прерываем продвижение...";
 
                 _listingPromotionWorker.Interrupt();
+
                 return;
             }
 
@@ -323,7 +318,7 @@ namespace EtsyPromotion.UI
         private void MainForm_Load(object sender, EventArgs e)
         {
             var cancellationToken = _updateIpCancellationToken.Token;
-            Task.Run(async delegate
+            Task.Run(() =>
             {
                 try
                 {
@@ -331,7 +326,7 @@ namespace EtsyPromotion.UI
                     {
                         GetCurrentIP(true);
 
-                        await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+                        cancellationToken.WaitHandle.WaitOne(TimeSpan.FromSeconds(20));
                     }
                 }
                 catch (TaskCanceledException)

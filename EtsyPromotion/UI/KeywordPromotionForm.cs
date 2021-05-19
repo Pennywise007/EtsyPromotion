@@ -23,6 +23,9 @@ namespace EtsyPromotion.UI
             InitializeWorker();
 
             ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn);
+
+            _statusManager = new PromotionTableStatusManager<KeyWordsListingInfo>(_worker, PromotionList,
+                                                                                  listingActionColumn, StatusColumn);
         }
 
         /// <summary>
@@ -64,7 +67,6 @@ namespace EtsyPromotion.UI
             _worker.WhenFinish += OnFinishPromotion;
             _worker.WhenException += OnException;
             _worker.WhenFinishListingPromotion += OnFinishListingPromotion;
-            _worker.WhenErrorDuringListingPromotion += OnErrorDuringListingPromotion;
         }
 
 #region WorkerEvents
@@ -98,25 +100,15 @@ namespace EtsyPromotion.UI
             }));
         }
 
-        private void OnFinishListingPromotion(object sender, int listingIndex)
+        private void OnFinishListingPromotion(object sender, PromotionDone promotionDone)
         {
             Invoke(new MethodInvoker(() =>
             {
-                _settings.ProductsList[listingIndex].DateLastPromotion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+                _settings.ProductsList[promotionDone.ElementIndex].DateLastPromotion = promotionDone.Date;
                 PromotionList.Refresh();
             }));
         }
 
-        private void OnErrorDuringListingPromotion(object sender, ErrorDuringListingPromotion errorInfo)
-        {
-            Invoke(new MethodInvoker(() =>
-            {
-               // ProductsList[listingIndex].DateLastPromotion = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
-               // PromotionList.Refresh();
-
-                // TODO add HANDLER
-            }));
-        }
 #endregion
 
         private void KeywordPromotion_FormClosing(object sender, FormClosingEventArgs e)
@@ -220,6 +212,7 @@ namespace EtsyPromotion.UI
         // index of window settings
         private int _windowIndex;
         private Settings _settings = new Settings();
+        private readonly PromotionTableStatusManager<KeyWordsListingInfo> _statusManager;
         private readonly IKeyWordPromotionWorker _worker;
 
         public class Settings : ProgramSettings

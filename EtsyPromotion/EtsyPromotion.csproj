@@ -83,6 +83,7 @@
     <Compile Include="Promotion\Implementation\PromotionWorkerBase.cs" />
     <Compile Include="Promotion\Implementation\ListingPromotionWorker.cs" />
     <Compile Include="Promotion\Interfaces\IPromotionWorker.cs" />
+    <Compile Include="UI\PromotionTableStatusManager.cs" />
     <Compile Include="WebDriver\WebDriverHelper.cs" />
     <Compile Include="WebDriver\EtsyController.cs" />
     <Compile Include="UI\KeywordPromotionForm.cs">
@@ -115,6 +116,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\ListingInfo.datasource" />
@@ -135,7 +137,12 @@
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="resourses\done.png" />
+    <None Include="resourses\skip.png" />
+    <None Include="resourses\running.png" />
+    <None Include="resourses\warning.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Selenium.WebDriver.ChromeDriver.89.0.4389.2300\build\Selenium.WebDriver.ChromeDriver.targets" Condition="Exists('..\packages\Selenium.WebDriver.ChromeDriver.89.0.4389.2300\build\Selenium.WebDriver.ChromeDriver.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

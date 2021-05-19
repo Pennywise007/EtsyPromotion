@@ -26,7 +26,7 @@ namespace EtsyPromotion.Promotion.Interfaces
         event EventHandler<Exception> WhenException;
 
         /// <summary> Finishing promotion on listing by index </summary>
-        event EventHandler<int> WhenFinishListingPromotion;
+        event EventHandler<PromotionDone> WhenFinishListingPromotion;
 
         /// <summary> An error occurred during the listing promotion </summary>
         event EventHandler<ErrorDuringListingPromotion> WhenErrorDuringListingPromotion;
@@ -46,12 +46,29 @@ namespace EtsyPromotion.Promotion.Interfaces
         bool IsWorking();
     }
 
-    public class ErrorDuringListingPromotion
+    public class ElementInfo
     {
         public int ElementIndex;
+    }
+
+    public class ErrorDuringListingPromotion : ElementInfo
+    {
         /// <summary>
         /// An error occurred during the listing promotion
         /// </summary>
         public string ErrorMessage;
+    }
+
+    public class PromotionDone : ElementInfo
+    {
+        private readonly DateTime _dateTime;
+
+        public string Date => _dateTime.ToString("dd/MM/yyyy HH:mm");
+
+        public PromotionDone(int index)
+        {
+            base.ElementIndex = index;
+            _dateTime = DateTime.Now;
+        }
     }
 }
