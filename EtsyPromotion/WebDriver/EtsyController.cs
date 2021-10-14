@@ -8,6 +8,8 @@ using System.Threading;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using WebDriverManager;
+using WebDriverManager.DriverConfigs.Impl;
 
 namespace EtsyPromotion.WebDriver
 {
@@ -15,11 +17,33 @@ namespace EtsyPromotion.WebDriver
     {
         protected override IWebDriver CreateWebDriver()
         {
-            // start new chrome as incognito
             var options = new ChromeOptions();
+            // start new chrome as incognito
             //options.AddArguments("--incognito");
 
-            return new ChromeDriver(options);
+            // auto loading updates for chrome driver
+            var chromeDriverDirName = Path.GetDirectoryName(new DriverManager().SetUpDriver(new ChromeConfig(), "MatchingBrowser"));
+            return new ChromeDriver(chromeDriverDirName, options);
+        }
+
+        /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
+        public override void OpenNewTab(string newUrl)
+        {
+            base.OpenNewTab(newUrl);
+
+            AcceptPrivacySettings();
+        }
+
+        public void AcceptPrivacySettings()
+        {
+            try
+            {
+                IWebElement element = Driver.FindElement(ByAttribute.Name("data-gdpr-single-choice-accept"));
+                element.Click();
+            }
+            catch (WebDriverException)
+            {
+            }
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
@@ -28,7 +52,9 @@ namespace EtsyPromotion.WebDriver
             IWebElement element = Driver.FindElement(By.ClassName("add-to-cart-form"));
             ScrollToElement(element);
 
+#if !DEBUG
             Thread.Sleep(1300);
+#endif
 
             element.Click();
 
@@ -49,7 +75,7 @@ namespace EtsyPromotion.WebDriver
             {
                 int minimumWaitingMillisecondSpan = waitVideo ? 9000 : 2000;
 #if DEBUG
-                minimumWaitingMillisecondSpan /= 3;
+                minimumWaitingMillisecondSpan /= 6;
 #endif
 
                 Thread.Sleep(TimeSpan.FromMilliseconds(random.Next(minimumWaitingMillisecondSpan, minimumWaitingMillisecondSpan + 3000)));
@@ -103,7 +129,7 @@ namespace EtsyPromotion.WebDriver
         }
 
         /// <exception cref="T:OpenQA.Selenium.WebDriverException">If no element matches the criteria.</exception>
-        public void WatchComments()
+        public void WatchComments(int maxPagesToWatch = 2)
         {
             void ScrollAllCommentsOnPage(ISearchContext commentsGroupElement)
             {
@@ -133,7 +159,7 @@ namespace EtsyPromotion.WebDriver
 
             try
             {
-                for (var i = 0; i < 2; ++i)
+                for (var i = 0; i < maxPagesToWatch; ++i)
                 {
                     ISearchContext commentsGroupElement;
                     try
@@ -182,6 +208,39 @@ namespace EtsyPromotion.WebDriver
             {
                 return new List<IWebElement>();
             }
+        }
+
+        public List<IWebElement> GetShopListingsList()
+        {
+            ISearchContext shopSuggestionsGroupElement = Driver;
+
+            try
+            {
+                shopSuggestionsGroupElement = Driver.FindElement(ByAttribute.Name("data-listings-container-wrapper"));
+            }
+            catch (NoSuchElementException) { }
+
+            try
+            {
+                shopSuggestionsGroupElement = shopSuggestionsGroupElement.FindElement(By.ClassName("data-featured-products-default-grid"));
+            }
+            catch (NoSuchElementException) { }
+
+            try
+            {
+                var suggestionsList = shopSuggestionsGroupElement.FindElements(By.ClassName("js-merch-stash-check-listing")).ToList();
+                return suggestionsList.ConvertAll(suggestion => suggestion.FindElement(By.ClassName("listing-link")));
+            }
+            catch (NoSuchElementException)
+            {
+                return new List<IWebElement>();
+            }
+        }
+
+        /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
+        public IWebElement FindSellerLink()
+        {
+            return Driver.FindElement(By.Id("listing-page-cart")).FindElement(By.ClassName("wt-text-link-no-underline"));
         }
 
         // Debug finction

@@ -33,6 +33,8 @@ namespace EtsyPromotion.UI
         public PromotionTableStatusManager(IPromotionWorker<TListingInfoType> promotionWorker, MetroGrid itemsTable,
                                            DataGridViewComboBoxColumn actionColumn, DataGridViewImageColumn statusColumn)
         {
+            promotionWorker.WhenStart += OnStartPromotion;
+            promotionWorker.WhenFinish += OnFinishPromotion;
             promotionWorker.WhenFinishListingPromotion += OnFinishListingPromotion;
             promotionWorker.WhenErrorDuringListingPromotion += OnErrorDuringListingPromotion;
 
@@ -53,9 +55,6 @@ namespace EtsyPromotion.UI
 
             _itemsTable.CellValueChanged += CellValueChanged;
             _itemsTable.DataBindingComplete += DataBindingComplete;
-
-            promotionWorker.WhenStart += OnStartPromotion;
-            promotionWorker.WhenFinish += OnFinishPromotion;
         }
 
         private void OnStartPromotion(object sender, EventArgs e)
@@ -169,6 +168,13 @@ namespace EtsyPromotion.UI
 
         private void InstallStatusCellInfo(DataGridViewCell cell, Status status, string warningStatusText = null)
         {
+            if (status == Status.eWarning && cell.Value == _iconsByStatus[Status.eWarning] && !string.IsNullOrEmpty(cell.ToolTipText))
+            {
+                // add extra error text to current
+                cell.ToolTipText += "\n\n" + warningStatusText;
+                return;
+            }
+
             cell.Value = _iconsByStatus[status];
             cell.ToolTipText = GetTooltipTextByStatus(status, warningStatusText);
         }

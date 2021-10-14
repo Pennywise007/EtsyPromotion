@@ -98,7 +98,7 @@ namespace EtsyPromotion.WebDriver
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
-        public void OpenNewTab(string newUrl)
+        public virtual void OpenNewTab(string newUrl)
         {
             if (Driver.Url.Length == 0 || Driver.Url == "data:,")
             {
@@ -202,7 +202,7 @@ namespace EtsyPromotion.WebDriver
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
-        public IWebElement GetParentElement(IWebElement element)
+        public static IWebElement GetParentElement(IWebElement element)
         {
             return element.FindElement(By.XPath("./.."));
         }

@@ -19,7 +19,7 @@ namespace EtsyPromotion.Promotion.Implementation
         /// </summary>
         private readonly List<PromotionInfo> _promotionList = new List<PromotionInfo>();
 
-        protected override bool InitializeAndCheckListings(BindingList<ListingInfo> listingsList)
+        protected override bool InitializeAndCheckListings(List<ListingInfo> listingsList)
         {
             // validate and transform all parameters
             for (var index = 0; index < listingsList.Count; ++index)

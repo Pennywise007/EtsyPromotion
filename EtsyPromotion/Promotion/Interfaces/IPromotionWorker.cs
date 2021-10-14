@@ -37,7 +37,7 @@ namespace EtsyPromotion.Promotion.Interfaces
         event Func<int, bool> OnSuccessfullyPromoted;
 
         /// <returns> True if promotion started successfully </returns>
-        bool StartPromotion(BindingList<TListingInfoType> listingsList);
+        bool StartPromotion(List<TListingInfoType> listingsList);
 
         /// <summary> Interrupting promotion </summary>
         void Interrupt();

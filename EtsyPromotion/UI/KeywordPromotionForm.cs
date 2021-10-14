@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -46,7 +47,7 @@ namespace EtsyPromotion.UI
 
             PromotionList.DataSource = new BindingSource
             {
-                DataSource = _settings.ProductsList,
+                DataSource = new SortableBindingList<KeyWordsListingInfo>(_settings.ProductsList),
                 AllowNew = true
             };
 
@@ -223,7 +224,7 @@ namespace EtsyPromotion.UI
                 eCurrent = 1
             }
 
-            public BindingList<KeyWordsListingInfo> ProductsList = new BindingList<KeyWordsListingInfo>();
+            public List<KeyWordsListingInfo> ProductsList = new List<KeyWordsListingInfo>();
         }
     }
 }

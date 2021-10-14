@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -9,16 +7,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml;
 using System.Xml.Serialization;
-using System.Xml.XPath;
 using EtsyPromotion.Promotion.Interfaces;
 using EtsyPromotion.WebDriver;
 using MetroFramework.Forms;
 using Microsoft.Extensions.DependencyInjection;
-using OpenQA.Selenium;
 using EtsyPromotion.General;
-using Microsoft.SqlServer.Server;
+using System.Net.Sockets;
 
 namespace EtsyPromotion.UI
 {
@@ -49,7 +44,7 @@ namespace EtsyPromotion.UI
 
             ItemsTable.DataSource = new BindingSource
             {
-                DataSource = _settings.ListingsList,
+                DataSource = new SortableBindingList<ListingInfo>(_settings.ListingsList),
                 AllowNew = true
             };
 
@@ -344,7 +339,15 @@ namespace EtsyPromotion.UI
             string currentIp = null;
             try
             {
-                currentIp = Dns.GetHostByName(Dns.GetHostName()).AddressList[0].ToString();
+                var host = Dns.GetHostEntry(Dns.GetHostName());
+                foreach (var ip in host.AddressList)
+                {
+                    if (ip.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        currentIp = ip.ToString();
+                        break;
+                    }
+                }
             }
             catch (Exception)
             {
@@ -400,7 +403,7 @@ namespace EtsyPromotion.UI
                 eCurrent = 1
             }
 
-            public BindingList<ListingInfo> ListingsList = new BindingList<ListingInfo>();
+            public List<ListingInfo> ListingsList = new List<ListingInfo>();
         }
     }
 }

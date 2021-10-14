@@ -38,14 +38,14 @@
             this.ShopName = new MetroFramework.Controls.MetroLabel();
             this.button1 = new MetroFramework.Controls.MetroButton();
             this.PromotionList = new MetroFramework.Controls.MetroGrid();
-            this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.dateLastPromotionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.Button_StartPromotion = new MetroFramework.Controls.MetroButton();
+            this.productsListDataSource = new System.Windows.Forms.BindingSource(this.components);
+            this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.keyWordsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.dateLastPromotionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.productsListDataSource = new System.Windows.Forms.BindingSource(this.components);
+            this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)(this.PromotionList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).BeginInit();
             this.SuspendLayout();
@@ -162,32 +162,6 @@
             this.PromotionList.Size = new System.Drawing.Size(1091, 411);
             this.PromotionList.TabIndex = 3;
             // 
-            // listingActionColumn
-            // 
-            this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.listingActionColumn.DataPropertyName = "ItemAction";
-            this.listingActionColumn.FillWeight = 75F;
-            this.listingActionColumn.HeaderText = "Действие";
-            this.listingActionColumn.Name = "listingActionColumn";
-            this.listingActionColumn.Width = 160;
-            // 
-            // dateLastPromotionColumn
-            // 
-            this.dateLastPromotionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.dateLastPromotionColumn.DataPropertyName = "DateLastPromotion";
-            this.dateLastPromotionColumn.HeaderText = "Дата продвижения";
-            this.dateLastPromotionColumn.Name = "dateLastPromotionColumn";
-            this.dateLastPromotionColumn.ToolTipText = "Дата последнего продвижения товара";
-            this.dateLastPromotionColumn.Width = 110;
-            // 
-            // StatusColumn
-            // 
-            this.StatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.StatusColumn.HeaderText = "Статус";
-            this.StatusColumn.Name = "StatusColumn";
-            this.StatusColumn.ReadOnly = true;
-            this.StatusColumn.Width = 45;
-            // 
             // Button_StartPromotion
             // 
             this.Button_StartPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -199,6 +173,20 @@
             this.Button_StartPromotion.Text = "Запустить продвижение";
             this.Button_StartPromotion.UseSelectable = true;
             this.Button_StartPromotion.Click += new System.EventHandler(this.Button_StartPromotion_Click);
+            // 
+            // productsListDataSource
+            // 
+            this.productsListDataSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.KeyWordsListingInfo);
+            // 
+            // listingActionColumn
+            // 
+            this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.listingActionColumn.DataPropertyName = "ItemAction";
+            this.listingActionColumn.FillWeight = 75F;
+            this.listingActionColumn.HeaderText = "Действие";
+            this.listingActionColumn.Name = "listingActionColumn";
+            this.listingActionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.listingActionColumn.Width = 160;
             // 
             // linkDataGridViewTextBoxColumn
             // 
@@ -217,6 +205,15 @@
             this.keyWordsDataGridViewTextBoxColumn.ToolTipText = "Список ключевых слов по которым будет продвигаться товар(через ;)";
             this.keyWordsDataGridViewTextBoxColumn.Width = 240;
             // 
+            // dateLastPromotionColumn
+            // 
+            this.dateLastPromotionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dateLastPromotionColumn.DataPropertyName = "DateLastPromotion";
+            this.dateLastPromotionColumn.HeaderText = "Дата продвижения";
+            this.dateLastPromotionColumn.Name = "dateLastPromotionColumn";
+            this.dateLastPromotionColumn.ToolTipText = "Дата последнего продвижения товара";
+            this.dateLastPromotionColumn.Width = 110;
+            // 
             // noteDataGridViewTextBoxColumn
             // 
             this.noteDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
@@ -226,9 +223,13 @@
             this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
             this.noteDataGridViewTextBoxColumn.Width = 188;
             // 
-            // productsListDataSource
+            // StatusColumn
             // 
-            this.productsListDataSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.KeyWordsListingInfo);
+            this.StatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.StatusColumn.HeaderText = "Статус";
+            this.StatusColumn.Name = "StatusColumn";
+            this.StatusColumn.ReadOnly = true;
+            this.StatusColumn.Width = 45;
             // 
             // KeywordPromotionForm
             // 
@@ -241,7 +242,6 @@
             this.Controls.Add(this.ShopName);
             this.Controls.Add(this.ShopLink);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.Name = "KeywordPromotionForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Style = MetroFramework.MetroColorStyle.Green;

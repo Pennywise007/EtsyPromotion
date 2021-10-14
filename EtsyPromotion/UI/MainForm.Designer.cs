@@ -40,13 +40,13 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.Button_KeyWordPromotion = new MetroFramework.Controls.MetroButton();
             this.CurrentIP = new MetroFramework.Controls.MetroLink();
-            this.openLinkColumn = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.PromotionStatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.openLinkColumn = new System.Windows.Forms.DataGridViewButtonColumn();
             this.lastPromotionDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.PromotionStatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             ((System.ComponentModel.ISupportInitialize)(this.ItemsTable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -187,6 +187,27 @@
             this.CurrentIP.UseSelectable = true;
             this.CurrentIP.Click += new System.EventHandler(this.CurrentIP_Click);
             // 
+            // etsyLinkInfoBindingSource
+            // 
+            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.ListingInfo);
+            // 
+            // listingActionColumn
+            // 
+            this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.listingActionColumn.DataPropertyName = "ItemAction";
+            this.listingActionColumn.FillWeight = 75F;
+            this.listingActionColumn.HeaderText = "Действие";
+            this.listingActionColumn.Name = "listingActionColumn";
+            this.listingActionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            this.listingActionColumn.Width = 160;
+            // 
+            // linkDataGridViewTextBoxColumn
+            // 
+            this.linkDataGridViewTextBoxColumn.DataPropertyName = "Link";
+            this.linkDataGridViewTextBoxColumn.FillWeight = 54.90196F;
+            this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
+            this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
+            // 
             // openLinkColumn
             // 
             this.openLinkColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
@@ -197,30 +218,6 @@
             this.openLinkColumn.ToolTipText = "Открыть в браузере ссылку на товар";
             this.openLinkColumn.UseColumnTextForButtonValue = true;
             this.openLinkColumn.Width = 70;
-            // 
-            // PromotionStatusColumn
-            // 
-            this.PromotionStatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.PromotionStatusColumn.Description = "Состояние каждого листинга";
-            this.PromotionStatusColumn.HeaderText = "Статус";
-            this.PromotionStatusColumn.Name = "PromotionStatusColumn";
-            this.PromotionStatusColumn.Width = 45;
-            // 
-            // listingActionColumn
-            // 
-            this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.listingActionColumn.DataPropertyName = "ItemAction";
-            this.listingActionColumn.FillWeight = 75F;
-            this.listingActionColumn.HeaderText = "Действие";
-            this.listingActionColumn.Name = "listingActionColumn";
-            this.listingActionColumn.Width = 160;
-            // 
-            // linkDataGridViewTextBoxColumn
-            // 
-            this.linkDataGridViewTextBoxColumn.DataPropertyName = "Link";
-            this.linkDataGridViewTextBoxColumn.FillWeight = 54.90196F;
-            this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
-            this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
             // 
             // lastPromotionDateColumn
             // 
@@ -240,9 +237,13 @@
             this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
             this.noteDataGridViewTextBoxColumn.ToolTipText = "Любая заметка об этом элементе";
             // 
-            // etsyLinkInfoBindingSource
+            // PromotionStatusColumn
             // 
-            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.ListingInfo);
+            this.PromotionStatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.PromotionStatusColumn.Description = "Состояние каждого листинга";
+            this.PromotionStatusColumn.HeaderText = "Статус";
+            this.PromotionStatusColumn.Name = "PromotionStatusColumn";
+            this.PromotionStatusColumn.Width = 45;
             // 
             // MainForm
             // 

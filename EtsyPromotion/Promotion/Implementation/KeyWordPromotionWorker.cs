@@ -21,7 +21,7 @@ namespace EtsyPromotion.Promotion.Implementation
         /// </summary>
         private readonly List<PromotionInfo> _promotionList = new List<PromotionInfo>();
 
-        protected override bool InitializeAndCheckListings(BindingList<KeyWordsListingInfo> listingsList)
+        protected override bool InitializeAndCheckListings(List<KeyWordsListingInfo> listingsList)
         {
             // validate and transform all parameters
             for (var index = 0; index < listingsList.Count; ++index)
@@ -75,19 +75,17 @@ namespace EtsyPromotion.Promotion.Implementation
             return _promotionList.Any();
         }
 
-
         protected override SearchController CreateWebDriverController()
         {
             SearchController controller = new SearchController();
             controller.Driver.Manage().Window.Maximize();
-
-            controller.OpenNewTab("https://www.etsy.com/");
-
             return controller;
         }
 
         protected override void ExecutePromotion(SearchController controller)
         {
+            controller.OpenNewTab("https://www.etsy.com/");
+
             foreach (var promotionInfo in _promotionList)
             {
                 foreach (var keyWord in promotionInfo.KeyWords)

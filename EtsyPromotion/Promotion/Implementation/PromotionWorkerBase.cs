@@ -53,7 +53,7 @@ namespace EtsyPromotion.Promotion.Implementation
         private int _countSuccessfullyPromotedListings = 0;
 
         /// <returns> True if promotion started successfully </returns>
-        public bool StartPromotion(BindingList<TListingInfoType> listingsList)
+        public bool StartPromotion(List<TListingInfoType> listingsList)
         {
             _countSuccessfullyPromotedListings = 0;
             ClearErrorMessage();
@@ -100,7 +100,7 @@ namespace EtsyPromotion.Promotion.Implementation
         /// </summary>
         /// <param name="listingsList">Listings for promotion</param>
         /// <returns>true if we can promote any listings from list, false otherwise.</returns>
-        protected abstract bool InitializeAndCheckListings(BindingList<TListingInfoType> listingsList);
+        protected abstract bool InitializeAndCheckListings(List<TListingInfoType> listingsList);
         /// <summary>
         /// Creation of web driver controller with default settings
         /// </summary>
@@ -206,7 +206,9 @@ namespace EtsyPromotion.Promotion.Implementation
                 try
                 {
                     controller.AddCurrentItemToCard();
+#if !DEBUG
                     Thread.Sleep(1500);
+#endif
                 }
                 catch (WebDriverException exception)
                 {
@@ -214,10 +216,115 @@ namespace EtsyPromotion.Promotion.Implementation
                     OnErrorDuringPromotion(listingIndex,
                         $"Возникла ошибка при добавлении товара в корзину, возможно товара нет в корзине или у него есть несколько вариантов добавления в корзину, обратитесь к администратору.\n\n {exception}");
                 }
+
+                if (!failed)
+                {
+                    controller.Back();
+                    Thread.Sleep(1000); // wait for load
+                }
             }
+
+            // imitation normal user, preview suggestions from seller or go to seller magazine and take a look on some listings
+            bool checkSuggestions = new Random().Next(2) == 0;
+            if (checkSuggestions && !PreviewSuggestions(controller))
+                PreviewShopListings(controller);
+            else if (!checkSuggestions && !PreviewShopListings(controller))
+                PreviewSuggestions(controller);
 
             if (!failed)
                 OnSuccessfullyPromotedListing(listingIndex);
+        }
+
+        // Open few random listings from seller suggestions with preview photo and comments
+        protected bool PreviewSuggestions(TControllerType controller)
+        {
+            var suggestionsList = controller.GetSuggestionsFromThisShop();
+            if (!suggestionsList.Any())
+                return false;
+
+            Random rnd = new Random();
+            for (int i = rnd.Next(3), count = suggestionsList.Count; i < count; i += rnd.Next(1, 4))
+            {
+                controller.ScrollToElement(suggestionsList[i]);
+#if !DEBUG
+                Thread.Sleep(1000);
+#endif
+
+                controller.OpenInNewTab(suggestionsList[i]);
+
+                try
+                {
+                    controller.PreviewPhotos();
+                }
+                catch (WebDriverException)
+                {}
+
+                try
+                {
+                    controller.WatchComments(1);
+                }
+                catch (WebDriverException)
+                {}
+
+                controller.CloseCurrentTab();
+            }
+            return true;
+        }
+
+        // Open seller page in new tab, scroll through listings and open random listings(max 5) with preview photo and comments
+        protected bool PreviewShopListings(TControllerType controller)
+        {
+            try
+            {
+                controller.OpenInNewTab(controller.FindSellerLink());
+            }
+            catch (WebDriverException)
+            {
+                return false;
+            }
+
+            try
+            {
+                var shopListings = controller.GetShopListingsList();
+                if (!shopListings.Any())
+                    return false;
+
+                int maxListingsCountToOpen = 5;
+
+                Random rnd = new Random();
+                for (int i = rnd.Next(shopListings.Count), count = shopListings.Count;
+                    i < count && maxListingsCountToOpen != 0; i = rnd.Next(i + 1, count), --maxListingsCountToOpen)
+                {
+                    controller.ScrollToElement(shopListings[i]);
+#if !DEBUG
+                    Thread.Sleep(1000);
+#endif
+                    controller.OpenInNewTab(shopListings[i]);
+
+                    try
+                    {
+                        controller.PreviewPhotos();
+                    }
+                    catch (WebDriverException)
+                    { }
+
+                    try
+                    {
+                        controller.WatchComments(1);
+                    }
+                    catch (WebDriverException)
+                    { }
+
+                    controller.CloseCurrentTab();
+                }
+            }
+            catch (WebDriverException)
+            {}
+            finally
+            {
+                controller.CloseCurrentTab();
+            }
+            return true;
         }
     }
 }
