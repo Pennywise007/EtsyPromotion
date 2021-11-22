@@ -53,7 +53,7 @@ namespace EtsyPromotion.Promotion.Implementation
         private int _countSuccessfullyPromotedListings = 0;
 
         /// <returns> True if promotion started successfully </returns>
-        public bool StartPromotion(List<TListingInfoType> listingsList)
+        public bool StartPromotion(List<TListingInfoType> listingsList, RunMode runMode)
         {
             _countSuccessfullyPromotedListings = 0;
             ClearErrorMessage();
@@ -61,7 +61,7 @@ namespace EtsyPromotion.Promotion.Implementation
             if (!InitializeAndCheckListings(listingsList))
             {
                 WhenFinish?.Invoke(this,
-                    string.IsNullOrEmpty(_errorMessage) ? "Не выбрано ниодного товара для продвижения" : _errorMessage);
+                    string.IsNullOrEmpty(_errorMessage) ? "Не выбрано ниодного товара для продвижения, возможно вы не правильно задали ссылки на товары" : _errorMessage);
 
                 return false;
             }
@@ -70,7 +70,7 @@ namespace EtsyPromotion.Promotion.Implementation
 
             WhenStart?.Invoke(this, new EventArgs());
 
-            _workerThread = new Thread(PromotionThread);
+            _workerThread = new Thread(() => PromotionThread(runMode));
             _workerThread.Start();
 
             return true;
@@ -140,22 +140,56 @@ namespace EtsyPromotion.Promotion.Implementation
             WhenException?.Invoke(this, exception);
         }
 
-        private void PromotionThread()
+        private void PromotionThread(RunMode runMode)
         {
             bool wasInterrupted = false;
             TControllerType controller = null;
             try
             {
-                try
+                for (;;)
                 {
-                    controller = CreateWebDriverController();
-                }
-                catch (WebDriverException exception)
-                {
-                    throw new WebDriverException("Не удалось создать драйвер для управления хромом.", exception);
-                }
+                    _errorMessage = null;
 
-                ExecutePromotion(controller);
+                    try
+                    {
+                        controller = CreateWebDriverController();
+                    }
+                    catch (WebDriverException exception)
+                    {
+                        throw new WebDriverException("Не удалось создать драйвер для управления хромом.", exception);
+                    }
+
+                    ExecutePromotion(controller);
+
+                    if (runMode == RunMode.eOnes)
+                        break;
+
+                    controller.Driver.Quit();
+
+                    switch (runMode)
+                    {
+                        case RunMode.eMinutes_5:
+                            Thread.Sleep(new TimeSpan(0, 5, 0));
+                            break;
+                        case RunMode.eMinutes_15:
+                            Thread.Sleep(new TimeSpan(0, 15, 0));
+                            break;
+                        case RunMode.eHour_1:
+                            Thread.Sleep(new TimeSpan(1, 0, 0));
+                            break;
+                        case RunMode.eHour_5:
+                            Thread.Sleep(new TimeSpan(5, 0, 0));
+                            break;
+                        case RunMode.eDay:
+                            Thread.Sleep(new TimeSpan(1, 0, 0, 0));
+                            break;
+                        case RunMode.eUntilInterrupt:
+                            Thread.Sleep(3000);
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                }
             }
             catch (Exception exception)
             {

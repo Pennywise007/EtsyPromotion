@@ -21,12 +21,16 @@ namespace EtsyPromotion.Promotion.Implementation
 
         protected override bool InitializeAndCheckListings(List<ListingInfo> listingsList)
         {
+            _promotionList.Clear();
+
             // validate and transform all parameters
             for (var index = 0; index < listingsList.Count; ++index)
             {
                 var listingInfo = listingsList[index];
                 if (listingInfo.ItemAction == ListingInfo.ListingAction.Skip || string.IsNullOrEmpty(listingInfo.Link))
                     continue;
+
+                Debug.Assert(listingInfo.ItemAction != ListingInfo.ListingAction.SearchOnly, "Search mode not supported by ListingPromotionWorker");
 
                 _promotionList.Add(new PromotionInfo
                 {

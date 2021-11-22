@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Net;
 using System.Linq;
@@ -39,8 +40,10 @@ namespace EtsyPromotion.UI
             InitializeWorker();
 
             ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn);
+            RunModeDetails.SetupRunModeToComboBox(ref RunModeComboBox);
 
             LoadSettingsFromXML();
+            RunModeComboBox.SelectedIndex = (int)_settings.RunMode;
 
             ItemsTable.DataSource = new BindingSource
             {
@@ -70,6 +73,7 @@ namespace EtsyPromotion.UI
             Invoke(new MethodInvoker(() =>
             {
                 ItemsTable.Enabled = false;
+                RunModeComboBox.Enabled = false;
                 Button_RunPromotion.Text = "Прервать продвижение";
             }));
         }
@@ -79,6 +83,7 @@ namespace EtsyPromotion.UI
             Invoke(new MethodInvoker(() =>
             {
                 ItemsTable.Enabled = true;
+                RunModeComboBox.Enabled = true;
                 Button_RunPromotion.Enabled = true;
                 Button_RunPromotion.Text = "Запустить продвижение";
 
@@ -145,6 +150,7 @@ namespace EtsyPromotion.UI
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            _settings.RunMode = (RunModeComboBox.SelectedItem as RunModeDetails).Mode;
             SaveSettingsToXML();
 
             _updateIpCancellationToken.Cancel();
@@ -289,7 +295,7 @@ namespace EtsyPromotion.UI
                 return;
             }
 
-            _listingPromotionWorker.StartPromotion(_settings.ListingsList);
+            _listingPromotionWorker.StartPromotion(_settings.ListingsList, (RunModeComboBox.SelectedItem as RunModeDetails).Mode);
         }
 
         private void ItemsTable_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -395,6 +401,23 @@ namespace EtsyPromotion.UI
             _keyWordPromotionWindows.Add(minimumNotOpenedWindowIndex, newKeyWordPromotionForm);
         }
 
+        private void ItemsTable_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            // draw row indexes
+            var grid = sender as DataGridView;
+            var rowIdx = (e.RowIndex + 1).ToString();
+
+            var centerFormat = new StringFormat()
+            {
+                // right alignment might actually make more sense for numbers
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
+            e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
+        }
+
         public class Settings : ProgramSettings
         {
             // Settings version
@@ -403,7 +426,9 @@ namespace EtsyPromotion.UI
                 eCurrent = 1
             }
 
+            public RunMode RunMode = RunMode.eOnes;
             public List<ListingInfo> ListingsList = new List<ListingInfo>();
         }
+
     }
 }

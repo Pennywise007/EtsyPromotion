@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Security;
 using System.Threading;
@@ -23,7 +24,8 @@ namespace EtsyPromotion.UI
             InitializeComponent();
             InitializeWorker();
 
-            ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn);
+            ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn, true);
+            RunModeDetails.SetupRunModeToComboBox(ref RunModeComboBox);
 
             _statusManager = new PromotionTableStatusManager<KeyWordsListingInfo>(_worker, PromotionList,
                                                                                   listingActionColumn, StatusColumn);
@@ -51,6 +53,9 @@ namespace EtsyPromotion.UI
                 AllowNew = true
             };
 
+            RunModeComboBox.SelectedIndex = (int)_settings.RunMode;
+            MaximumSearchPagesNumericUpDown.Value = _settings.MaximumSearchPages;
+
             Show();
         }
 
@@ -68,6 +73,7 @@ namespace EtsyPromotion.UI
             _worker.WhenFinish += OnFinishPromotion;
             _worker.WhenException += OnException;
             _worker.WhenFinishListingPromotion += OnFinishListingPromotion;
+            _worker.WhenFoundListing += OnWhenFoundListing;
         }
 
 #region WorkerEvents
@@ -76,6 +82,9 @@ namespace EtsyPromotion.UI
             Invoke(new MethodInvoker(() =>
             {
                 PromotionList.Enabled = false;
+                RunModeComboBox.Enabled = false;
+                MaximumSearchPagesNumericUpDown.Enabled = false;
+
                 Button_StartPromotion.Text = "Прервать продвижение";
             }));
         }
@@ -85,6 +94,8 @@ namespace EtsyPromotion.UI
             Invoke(new MethodInvoker(() =>
             {
                 PromotionList.Enabled = true;
+                RunModeComboBox.Enabled = true;
+                MaximumSearchPagesNumericUpDown.Enabled = true;
                 Button_StartPromotion.Enabled = true;
                 Button_StartPromotion.Text = "Запустить продвижение";
 
@@ -106,6 +117,16 @@ namespace EtsyPromotion.UI
             Invoke(new MethodInvoker(() =>
             {
                 _settings.ProductsList[promotionDone.ElementIndex].DateLastPromotion = promotionDone.Date;
+
+                PromotionList.Refresh();
+            }));
+        }
+
+        private void OnWhenFoundListing(object sender, FoundListingInfo foundInfo)
+        {
+            Invoke(new MethodInvoker(() =>
+            {
+                _settings.ProductsList[foundInfo.ElementIndex].FoundOnPage = foundInfo.PageIndex.ToString();
                 PromotionList.Refresh();
             }));
         }
@@ -119,6 +140,10 @@ namespace EtsyPromotion.UI
                     "Закрытие окна",
                     MessageBoxButtons.YesNo) == DialogResult.No)
                 e.Cancel = true;
+
+            _settings.RunMode = (RunModeComboBox.SelectedItem as RunModeDetails).Mode;
+            _settings.MaximumSearchPages = (int)MaximumSearchPagesNumericUpDown.Value;
+
         }
 
         private void KeywordPromotion_FormClosed(object sender, FormClosedEventArgs e)
@@ -207,7 +232,25 @@ namespace EtsyPromotion.UI
                 return;
             }
 
-            _worker.StartPromotion(_settings.ProductsList);
+            _worker.SetMaxSearchPagesCount((int) MaximumSearchPagesNumericUpDown.Value);
+            _worker.StartPromotion(_settings.ProductsList, (RunModeComboBox.SelectedItem as RunModeDetails).Mode);
+        }
+
+        private void PromotionList_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            // draw row indexes
+            var grid = sender as DataGridView;
+            var rowIdx = (e.RowIndex + 1).ToString();
+
+            var centerFormat = new StringFormat()
+            {
+                // right alignment might actually make more sense for numbers
+                Alignment = StringAlignment.Center,
+                LineAlignment = StringAlignment.Center
+            };
+
+            var headerBounds = new Rectangle(e.RowBounds.Left, e.RowBounds.Top, grid.RowHeadersWidth, e.RowBounds.Height);
+            e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
         }
 
         // index of window settings
@@ -224,6 +267,8 @@ namespace EtsyPromotion.UI
                 eCurrent = 1
             }
 
+            public RunMode RunMode = RunMode.eOnes;
+            public int MaximumSearchPages = 100;
             public List<KeyWordsListingInfo> ProductsList = new List<KeyWordsListingInfo>();
         }
     }

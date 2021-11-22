@@ -39,15 +39,21 @@
             this.button1 = new MetroFramework.Controls.MetroButton();
             this.PromotionList = new MetroFramework.Controls.MetroGrid();
             this.Button_StartPromotion = new MetroFramework.Controls.MetroButton();
-            this.productsListDataSource = new System.Windows.Forms.BindingSource(this.components);
             this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            this.dateLastPromotionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.FoundOnPage = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.keyWordsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.dateLastPromotionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.productsListDataSource = new System.Windows.Forms.BindingSource(this.components);
+            this.RunModeComboBox = new MetroFramework.Controls.MetroComboBox();
+            this.RumModeLabel = new MetroFramework.Controls.MetroLabel();
+            this.MaxSearchPagesCount = new MetroFramework.Controls.MetroLabel();
+            this.MaximumSearchPagesNumericUpDown = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.PromotionList)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaximumSearchPagesNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // ShopLink
@@ -131,8 +137,9 @@
             this.listingActionColumn,
             this.linkDataGridViewTextBoxColumn,
             this.keyWordsDataGridViewTextBoxColumn,
-            this.dateLastPromotionColumn,
             this.noteDataGridViewTextBoxColumn,
+            this.dateLastPromotionColumn,
+            this.FoundOnPage,
             this.StatusColumn});
             this.PromotionList.DataSource = this.productsListDataSource;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -159,24 +166,20 @@
             this.PromotionList.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.PromotionList.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.PromotionList.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.PromotionList.Size = new System.Drawing.Size(1091, 411);
+            this.PromotionList.Size = new System.Drawing.Size(1091, 419);
             this.PromotionList.TabIndex = 3;
+            this.PromotionList.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.PromotionList_RowPostPaint);
             // 
             // Button_StartPromotion
             // 
-            this.Button_StartPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button_StartPromotion.Location = new System.Drawing.Point(23, 519);
+            this.Button_StartPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Button_StartPromotion.Location = new System.Drawing.Point(537, 527);
             this.Button_StartPromotion.Name = "Button_StartPromotion";
-            this.Button_StartPromotion.Size = new System.Drawing.Size(1091, 48);
+            this.Button_StartPromotion.Size = new System.Drawing.Size(577, 54);
             this.Button_StartPromotion.TabIndex = 4;
             this.Button_StartPromotion.Text = "Запустить продвижение";
             this.Button_StartPromotion.UseSelectable = true;
             this.Button_StartPromotion.Click += new System.EventHandler(this.Button_StartPromotion_Click);
-            // 
-            // productsListDataSource
-            // 
-            this.productsListDataSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.KeyWordsListingInfo);
             // 
             // listingActionColumn
             // 
@@ -187,6 +190,32 @@
             this.listingActionColumn.Name = "listingActionColumn";
             this.listingActionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.listingActionColumn.Width = 160;
+            // 
+            // dateLastPromotionColumn
+            // 
+            this.dateLastPromotionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.dateLastPromotionColumn.DataPropertyName = "DateLastPromotion";
+            this.dateLastPromotionColumn.HeaderText = "Дата продвижения";
+            this.dateLastPromotionColumn.Name = "dateLastPromotionColumn";
+            this.dateLastPromotionColumn.ToolTipText = "Дата последнего продвижения товара";
+            this.dateLastPromotionColumn.Width = 110;
+            // 
+            // FoundOnPage
+            // 
+            this.FoundOnPage.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.FoundOnPage.DataPropertyName = "FoundOnPage";
+            this.FoundOnPage.HeaderText = "Найдено на странице";
+            this.FoundOnPage.Name = "FoundOnPage";
+            this.FoundOnPage.ReadOnly = true;
+            this.FoundOnPage.Width = 87;
+            // 
+            // StatusColumn
+            // 
+            this.StatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.StatusColumn.HeaderText = "Статус";
+            this.StatusColumn.Name = "StatusColumn";
+            this.StatusColumn.ReadOnly = true;
+            this.StatusColumn.Width = 45;
             // 
             // linkDataGridViewTextBoxColumn
             // 
@@ -205,37 +234,83 @@
             this.keyWordsDataGridViewTextBoxColumn.ToolTipText = "Список ключевых слов по которым будет продвигаться товар(через ;)";
             this.keyWordsDataGridViewTextBoxColumn.Width = 240;
             // 
-            // dateLastPromotionColumn
-            // 
-            this.dateLastPromotionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.dateLastPromotionColumn.DataPropertyName = "DateLastPromotion";
-            this.dateLastPromotionColumn.HeaderText = "Дата продвижения";
-            this.dateLastPromotionColumn.Name = "dateLastPromotionColumn";
-            this.dateLastPromotionColumn.ToolTipText = "Дата последнего продвижения товара";
-            this.dateLastPromotionColumn.Width = 110;
-            // 
             // noteDataGridViewTextBoxColumn
             // 
-            this.noteDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.noteDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.noteDataGridViewTextBoxColumn.DataPropertyName = "Note";
             this.noteDataGridViewTextBoxColumn.FillWeight = 50F;
             this.noteDataGridViewTextBoxColumn.HeaderText = "Заметка";
             this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
-            this.noteDataGridViewTextBoxColumn.Width = 188;
             // 
-            // StatusColumn
+            // productsListDataSource
             // 
-            this.StatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.StatusColumn.HeaderText = "Статус";
-            this.StatusColumn.Name = "StatusColumn";
-            this.StatusColumn.ReadOnly = true;
-            this.StatusColumn.Width = 45;
+            this.productsListDataSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.KeyWordsListingInfo);
+            // 
+            // RunModeComboBox
+            // 
+            this.RunModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RunModeComboBox.FormattingEnabled = true;
+            this.RunModeComboBox.ItemHeight = 23;
+            this.RunModeComboBox.Location = new System.Drawing.Point(218, 527);
+            this.RunModeComboBox.Name = "RunModeComboBox";
+            this.RunModeComboBox.Size = new System.Drawing.Size(313, 29);
+            this.RunModeComboBox.TabIndex = 9;
+            this.RunModeComboBox.UseSelectable = true;
+            // 
+            // RumModeLabel
+            // 
+            this.RumModeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.RumModeLabel.AutoSize = true;
+            this.RumModeLabel.Location = new System.Drawing.Point(23, 533);
+            this.RumModeLabel.Name = "RumModeLabel";
+            this.RumModeLabel.Size = new System.Drawing.Size(189, 19);
+            this.RumModeLabel.TabIndex = 8;
+            this.RumModeLabel.Text = "Режим запуска продвижения";
+            // 
+            // MaxSearchPagesCount
+            // 
+            this.MaxSearchPagesCount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.MaxSearchPagesCount.AutoSize = true;
+            this.MaxSearchPagesCount.Location = new System.Drawing.Point(23, 562);
+            this.MaxSearchPagesCount.Name = "MaxSearchPagesCount";
+            this.MaxSearchPagesCount.Size = new System.Drawing.Size(430, 19);
+            this.MaxSearchPagesCount.TabIndex = 10;
+            this.MaxSearchPagesCount.Text = "Максимальное количество страниц на которых производится поиск";
+            // 
+            // MaximumSearchPagesNumericUpDown
+            // 
+            this.MaximumSearchPagesNumericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MaximumSearchPagesNumericUpDown.Location = new System.Drawing.Point(460, 562);
+            this.MaximumSearchPagesNumericUpDown.Maximum = new decimal(new int[] {
+            300,
+            0,
+            0,
+            0});
+            this.MaximumSearchPagesNumericUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.MaximumSearchPagesNumericUpDown.Name = "MaximumSearchPagesNumericUpDown";
+            this.MaximumSearchPagesNumericUpDown.Size = new System.Drawing.Size(71, 20);
+            this.MaximumSearchPagesNumericUpDown.TabIndex = 11;
+            this.MaximumSearchPagesNumericUpDown.Value = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
             // 
             // KeywordPromotionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1137, 590);
+            this.Controls.Add(this.MaximumSearchPagesNumericUpDown);
+            this.Controls.Add(this.MaxSearchPagesCount);
+            this.Controls.Add(this.RunModeComboBox);
+            this.Controls.Add(this.RumModeLabel);
             this.Controls.Add(this.Button_StartPromotion);
             this.Controls.Add(this.PromotionList);
             this.Controls.Add(this.button1);
@@ -250,6 +325,7 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.KeywordPromotion_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.PromotionList)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.MaximumSearchPagesNumericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -266,8 +342,13 @@
         private System.Windows.Forms.DataGridViewComboBoxColumn listingActionColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn linkDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn keyWordsDataGridViewTextBoxColumn;
-        private System.Windows.Forms.DataGridViewTextBoxColumn dateLastPromotionColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn noteDataGridViewTextBoxColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn dateLastPromotionColumn;
+        private System.Windows.Forms.DataGridViewTextBoxColumn FoundOnPage;
         private System.Windows.Forms.DataGridViewImageColumn StatusColumn;
+        private MetroFramework.Controls.MetroComboBox RunModeComboBox;
+        private MetroFramework.Controls.MetroLabel RumModeLabel;
+        private MetroFramework.Controls.MetroLabel MaxSearchPagesCount;
+        private System.Windows.Forms.NumericUpDown MaximumSearchPagesNumericUpDown;
     }
 }

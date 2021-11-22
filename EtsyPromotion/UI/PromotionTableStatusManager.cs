@@ -55,6 +55,9 @@ namespace EtsyPromotion.UI
 
             _itemsTable.CellValueChanged += CellValueChanged;
             _itemsTable.DataBindingComplete += DataBindingComplete;
+            _itemsTable.DefaultValuesNeeded += DefaultValuesNeeded;
+
+            InitializeStatuses(false);
         }
 
         private void OnStartPromotion(object sender, EventArgs e)
@@ -105,7 +108,9 @@ namespace EtsyPromotion.UI
 
         private void DefaultValuesNeeded(object sender, DataGridViewRowEventArgs e)
         {
-            InstallStatusCellInfo(e.Row.Cells[StatusColumnInd], Status.eNone);
+            // Init status for new columns
+            var status = InitializeStatusByAction(GetActionFromCell(e.Row.Index), false);
+            InstallStatusCellInfo(e.Row.Cells[StatusColumnInd], status);
         }
 
         /// <summary>
@@ -117,7 +122,7 @@ namespace EtsyPromotion.UI
             if (!_firstDataBinding)
                 return;
 
-            _firstDataBinding = true;
+            _firstDataBinding = false;
             InitializeStatuses(false);
         }
 
@@ -195,6 +200,7 @@ namespace EtsyPromotion.UI
                     return Status.eSkip;
                 case ListingInfo.ListingAction.AddToCard:
                 case ListingInfo.ListingAction.Preview:
+                case ListingInfo.ListingAction.SearchOnly:
                     return onStartPromotion ? Status.eRunning : Status.eNone;
                 default:
                     Trace.Assert(false, $"SetupStatus, не известное действие у листинга {action.ToString()}");

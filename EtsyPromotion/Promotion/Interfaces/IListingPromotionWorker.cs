@@ -19,7 +19,8 @@ namespace EtsyPromotion.Promotion.Interfaces
         {
             Skip = 0,
             AddToCard,
-            Preview
+            Preview,
+            SearchOnly
         }
 
         public ListingAction ItemAction { get; set; } = ListingAction.AddToCard;
@@ -34,14 +35,18 @@ namespace EtsyPromotion.Promotion.Interfaces
         public ListingInfo.ListingAction Action { get; set; }
         public string Presentation { get; set; }
 
-        public static void SetupListingActionsToColumn(ref DataGridViewComboBoxColumn column)
+        public static void SetupListingActionsToColumn(ref DataGridViewComboBoxColumn column, bool searchEnabled = false)
         {
-            column.DataSource = new BindingList<ListingActionDetails>
+            var bindingsList =  new BindingList<ListingActionDetails>
             {
                 new ListingActionDetails{ Action = ListingInfo.ListingAction.Skip,      Presentation = "Пропускать" },
                 new ListingActionDetails{ Action = ListingInfo.ListingAction.AddToCard, Presentation = "Добавлять в корзину" },
                 new ListingActionDetails{ Action = ListingInfo.ListingAction.Preview,   Presentation = "Предосмотр(фото + комментарии)" }
             };
+            if (searchEnabled)
+                bindingsList.Add(new ListingActionDetails {Action = ListingInfo.ListingAction.SearchOnly, Presentation = "Поиск номера"});
+
+            column.DataSource = bindingsList;
             column.DisplayMember = "Presentation";
             column.ValueMember = "Action";
         }

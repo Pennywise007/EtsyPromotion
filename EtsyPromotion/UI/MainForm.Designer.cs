@@ -35,18 +35,20 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.ItemsTable = new MetroFramework.Controls.MetroGrid();
+            this.openLinkColumn = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.PromotionStatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
             this.Button_RunPromotion = new MetroFramework.Controls.MetroButton();
             this.Button_CheckLocation = new MetroFramework.Controls.MetroButton();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.Button_KeyWordPromotion = new MetroFramework.Controls.MetroButton();
             this.CurrentIP = new MetroFramework.Controls.MetroLink();
-            this.etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
+            this.RumModeLabel = new MetroFramework.Controls.MetroLabel();
+            this.RunModeComboBox = new MetroFramework.Controls.MetroComboBox();
             this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.openLinkColumn = new System.Windows.Forms.DataGridViewButtonColumn();
             this.lastPromotionDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PromotionStatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            this.etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.ItemsTable)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -96,7 +98,7 @@
             this.ItemsTable.EnableHeadersVisualStyles = false;
             this.ItemsTable.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
             this.ItemsTable.GridColor = System.Drawing.Color.White;
-            this.ItemsTable.Location = new System.Drawing.Point(12, 61);
+            this.ItemsTable.Location = new System.Drawing.Point(15, 61);
             this.ItemsTable.Name = "ItemsTable";
             this.ItemsTable.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
             dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
@@ -109,18 +111,38 @@
             this.ItemsTable.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.ItemsTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.ItemsTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ItemsTable.Size = new System.Drawing.Size(776, 348);
+            this.ItemsTable.Size = new System.Drawing.Size(770, 386);
             this.ItemsTable.TabIndex = 0;
             this.ItemsTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ItemsTable_CellContentClick);
+            this.ItemsTable.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.ItemsTable_RowPostPaint);
+            // 
+            // openLinkColumn
+            // 
+            this.openLinkColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.openLinkColumn.FillWeight = 75F;
+            this.openLinkColumn.HeaderText = "Перейти по ссылке";
+            this.openLinkColumn.Name = "openLinkColumn";
+            this.openLinkColumn.Text = "Открыть";
+            this.openLinkColumn.ToolTipText = "Открыть в браузере ссылку на товар";
+            this.openLinkColumn.UseColumnTextForButtonValue = true;
+            this.openLinkColumn.Width = 70;
+            // 
+            // PromotionStatusColumn
+            // 
+            this.PromotionStatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.PromotionStatusColumn.Description = "Состояние каждого листинга";
+            this.PromotionStatusColumn.HeaderText = "Статус";
+            this.PromotionStatusColumn.Name = "PromotionStatusColumn";
+            this.PromotionStatusColumn.Width = 45;
             // 
             // Button_RunPromotion
             // 
             this.Button_RunPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.Button_RunPromotion.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Button_RunPromotion.Location = new System.Drawing.Point(12, 415);
+            this.Button_RunPromotion.Location = new System.Drawing.Point(280, 453);
             this.Button_RunPromotion.Name = "Button_RunPromotion";
-            this.Button_RunPromotion.Size = new System.Drawing.Size(776, 40);
+            this.Button_RunPromotion.Size = new System.Drawing.Size(505, 51);
             this.Button_RunPromotion.TabIndex = 2;
             this.Button_RunPromotion.Text = "Запустить продвижение";
             this.Button_RunPromotion.UseSelectable = true;
@@ -134,7 +156,7 @@
             this.Button_CheckLocation.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.Button_CheckLocation.Location = new System.Drawing.Point(3, 3);
             this.Button_CheckLocation.Name = "Button_CheckLocation";
-            this.Button_CheckLocation.Size = new System.Drawing.Size(252, 40);
+            this.Button_CheckLocation.Size = new System.Drawing.Size(255, 40);
             this.Button_CheckLocation.TabIndex = 1;
             this.Button_CheckLocation.Text = "Проверить текущий ip и местоположение";
             this.Button_CheckLocation.UseSelectable = true;
@@ -145,7 +167,7 @@
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.CausesValidation = false;
-            this.splitContainer1.Location = new System.Drawing.Point(12, 461);
+            this.splitContainer1.Location = new System.Drawing.Point(12, 510);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -156,7 +178,7 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.Button_KeyWordPromotion);
             this.splitContainer1.Size = new System.Drawing.Size(776, 46);
-            this.splitContainer1.SplitterDistance = 258;
+            this.splitContainer1.SplitterDistance = 261;
             this.splitContainer1.TabIndex = 3;
             // 
             // Button_KeyWordPromotion
@@ -168,7 +190,7 @@
             this.Button_KeyWordPromotion.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Button_KeyWordPromotion.Location = new System.Drawing.Point(3, 3);
             this.Button_KeyWordPromotion.Name = "Button_KeyWordPromotion";
-            this.Button_KeyWordPromotion.Size = new System.Drawing.Size(508, 40);
+            this.Button_KeyWordPromotion.Size = new System.Drawing.Size(505, 40);
             this.Button_KeyWordPromotion.TabIndex = 0;
             this.Button_KeyWordPromotion.Text = "Продвижение по ключевым словам";
             this.Button_KeyWordPromotion.UseSelectable = true;
@@ -178,7 +200,7 @@
             // 
             this.CurrentIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.CurrentIP.AutoSize = true;
-            this.CurrentIP.Location = new System.Drawing.Point(535, 33);
+            this.CurrentIP.Location = new System.Drawing.Point(533, 32);
             this.CurrentIP.Name = "CurrentIP";
             this.CurrentIP.Size = new System.Drawing.Size(252, 23);
             this.CurrentIP.TabIndex = 5;
@@ -187,9 +209,28 @@
             this.CurrentIP.UseSelectable = true;
             this.CurrentIP.Click += new System.EventHandler(this.CurrentIP_Click);
             // 
-            // etsyLinkInfoBindingSource
+            // RumModeLabel
             // 
-            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.ListingInfo);
+            this.RumModeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RumModeLabel.AutoSize = true;
+            this.RumModeLabel.Location = new System.Drawing.Point(49, 453);
+            this.RumModeLabel.Name = "RumModeLabel";
+            this.RumModeLabel.Size = new System.Drawing.Size(189, 19);
+            this.RumModeLabel.TabIndex = 6;
+            this.RumModeLabel.Text = "Режим запуска продвижения";
+            // 
+            // RunModeComboBox
+            // 
+            this.RunModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RunModeComboBox.FormattingEnabled = true;
+            this.RunModeComboBox.ItemHeight = 23;
+            this.RunModeComboBox.Location = new System.Drawing.Point(15, 475);
+            this.RunModeComboBox.Name = "RunModeComboBox";
+            this.RunModeComboBox.Size = new System.Drawing.Size(255, 29);
+            this.RunModeComboBox.TabIndex = 7;
+            this.RunModeComboBox.UseSelectable = true;
             // 
             // listingActionColumn
             // 
@@ -207,17 +248,6 @@
             this.linkDataGridViewTextBoxColumn.FillWeight = 54.90196F;
             this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
             this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
-            // 
-            // openLinkColumn
-            // 
-            this.openLinkColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.openLinkColumn.FillWeight = 75F;
-            this.openLinkColumn.HeaderText = "Перейти по ссылке";
-            this.openLinkColumn.Name = "openLinkColumn";
-            this.openLinkColumn.Text = "Открыть";
-            this.openLinkColumn.ToolTipText = "Открыть в браузере ссылку на товар";
-            this.openLinkColumn.UseColumnTextForButtonValue = true;
-            this.openLinkColumn.Width = 70;
             // 
             // lastPromotionDateColumn
             // 
@@ -237,20 +267,18 @@
             this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
             this.noteDataGridViewTextBoxColumn.ToolTipText = "Любая заметка об этом элементе";
             // 
-            // PromotionStatusColumn
+            // etsyLinkInfoBindingSource
             // 
-            this.PromotionStatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.PromotionStatusColumn.Description = "Состояние каждого листинга";
-            this.PromotionStatusColumn.HeaderText = "Статус";
-            this.PromotionStatusColumn.Name = "PromotionStatusColumn";
-            this.PromotionStatusColumn.Width = 45;
+            this.etsyLinkInfoBindingSource.DataSource = typeof(EtsyPromotion.Promotion.Interfaces.ListingInfo);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
-            this.ClientSize = new System.Drawing.Size(797, 530);
+            this.ClientSize = new System.Drawing.Size(797, 579);
+            this.Controls.Add(this.RunModeComboBox);
+            this.Controls.Add(this.RumModeLabel);
             this.Controls.Add(this.Button_RunPromotion);
             this.Controls.Add(this.CurrentIP);
             this.Controls.Add(this.splitContainer1);
@@ -288,6 +316,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn lastPromotionDateColumn;
         private System.Windows.Forms.DataGridViewTextBoxColumn noteDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewImageColumn PromotionStatusColumn;
+        private MetroFramework.Controls.MetroLabel RumModeLabel;
+        private MetroFramework.Controls.MetroComboBox RunModeComboBox;
     }
 }
 

@@ -21,8 +21,19 @@ namespace EtsyPromotion.Promotion.Implementation
         /// </summary>
         private readonly List<PromotionInfo> _promotionList = new List<PromotionInfo>();
 
+        /// <summary> Finishing promotion on listing by index </summary>
+        public event EventHandler<FoundListingInfo> WhenFoundListing;
+
+        private int _maxSearchPagesCount = 100;
+        public void SetMaxSearchPagesCount(int maxSearchPagesCount)
+        {
+            _maxSearchPagesCount = maxSearchPagesCount;
+        }
+
         protected override bool InitializeAndCheckListings(List<KeyWordsListingInfo> listingsList)
         {
+            _promotionList.Clear();
+
             // validate and transform all parameters
             for (var index = 0; index < listingsList.Count; ++index)
             {
@@ -65,7 +76,7 @@ namespace EtsyPromotion.Promotion.Implementation
                 if (keyWordsArray != null && !string.IsNullOrEmpty(listingId))
                     _promotionList.Add(new PromotionInfo
                     {
-                        AddToCard = listingInfo.ItemAction == ListingInfo.ListingAction.AddToCard,
+                        Action = listingInfo.ItemAction,
                         ElementIndexInProductsList = index,
                         ListingId = listingId,
                         KeyWords = keyWordsArray.ToList()
@@ -96,7 +107,7 @@ namespace EtsyPromotion.Promotion.Implementation
 #if DEBUG
                     const int maxPageNumber = 3;
 #else
-                    const int maxPageNumber = 100;
+                    int maxPageNumber = _maxSearchPagesCount;
 #endif
                     IWebElement productLink = null;
 
@@ -128,27 +139,33 @@ namespace EtsyPromotion.Promotion.Implementation
 
                     if (productLink != null)
                     {
-                        try
+                        if (promotionInfo.Action != ListingInfo.ListingAction.SearchOnly)
                         {
-                            controller.OpenInNewTab(productLink);
-                        }
-                        catch (WebDriverException exception)
-                        {
-                            OnErrorDuringPromotion(promotionInfo.ElementIndexInProductsList,
-                                $"Не удалось открыть страницу с товаром, обратитесь к автору.\n\n {exception}");
-                            continue;
+                            try
+                            {
+                                controller.OpenInNewTab(productLink);
+                            }
+                            catch (WebDriverException exception)
+                            {
+                                OnErrorDuringPromotion(promotionInfo.ElementIndexInProductsList,
+                                    $"Не удалось открыть страницу с товаром, обратитесь к автору.\n\n {exception}");
+                                continue;
+                            }
+
+                            InspectCurrentListing(controller, promotionInfo.ElementIndexInProductsList,
+                                promotionInfo.Action == ListingInfo.ListingAction.AddToCard);
+
+                            try
+                            {
+                                controller.CloseCurrentTab();
+                            }
+                            catch (NoSuchWindowException)
+                            {
+                                Debug.Assert(false, "Почему-то не смогли закрыть вкладку хотя она была успешно открыта");
+                            }
                         }
 
-                        InspectCurrentListing(controller, promotionInfo.ElementIndexInProductsList, promotionInfo.AddToCard);
-
-                        try
-                        {
-                            controller.CloseCurrentTab();
-                        }
-                        catch (NoSuchWindowException)
-                        {
-                            Debug.Assert(false, "Почему-то не смогли закрыть вкладку хотя она была успешно открыта");
-                        }
+                        WhenFoundListing?.Invoke(this, new FoundListingInfo(promotionInfo.ElementIndexInProductsList, currentPage));
                     }
                     else
                     {
@@ -207,7 +224,7 @@ namespace EtsyPromotion.Promotion.Implementation
 
         private class PromotionInfo
         {
-            public bool AddToCard;
+            public ListingInfo.ListingAction Action;
             public int ElementIndexInProductsList;
             public string ListingId;
             public List<string> KeyWords;
