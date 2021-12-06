@@ -126,7 +126,7 @@ namespace EtsyPromotion.UI
         {
             Invoke(new MethodInvoker(() =>
             {
-                _settings.ProductsList[foundInfo.ElementIndex].FoundOnPage = foundInfo.PageIndex.ToString();
+                _settings.ProductsList[foundInfo.ElementIndex].FoundOnPage = foundInfo.PageIndex;
                 PromotionList.Refresh();
             }));
         }

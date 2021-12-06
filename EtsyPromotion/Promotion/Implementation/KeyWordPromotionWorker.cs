@@ -164,8 +164,10 @@ namespace EtsyPromotion.Promotion.Implementation
                                 Debug.Assert(false, "Почему-то не смогли закрыть вкладку хотя она была успешно открыта");
                             }
                         }
+                        else
+                            OnSuccessfullyPromotedListing(promotionInfo.ElementIndexInProductsList);
 
-                        WhenFoundListing?.Invoke(this, new FoundListingInfo(promotionInfo.ElementIndexInProductsList, currentPage));
+                        WhenFoundListing?.Invoke(this, new FoundListingInfo(promotionInfo.ElementIndexInProductsList, currentPage.ToString()));
                     }
                     else
                     {
@@ -178,7 +180,13 @@ namespace EtsyPromotion.Promotion.Implementation
                         }
                         else
                         {
-                            OnErrorDuringPromotion(promotionInfo.ElementIndexInProductsList, $"Не удалось найти товар по ключевому слову {keyWord}.");
+                            if (promotionInfo.Action == ListingInfo.ListingAction.SearchOnly)
+                            {
+                                WhenFoundListing?.Invoke(this, new FoundListingInfo(promotionInfo.ElementIndexInProductsList, $">{currentPage.ToString()}"));
+                                OnSuccessfullyPromotedListing(promotionInfo.ElementIndexInProductsList);
+                            }
+                            else
+                                OnErrorDuringPromotion(promotionInfo.ElementIndexInProductsList, $"Не удалось найти товар по ключевому слову {keyWord}.");
                         }
                     }
                 }

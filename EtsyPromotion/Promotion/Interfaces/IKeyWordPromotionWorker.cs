@@ -19,8 +19,8 @@ namespace EtsyPromotion.Promotion.Interfaces
     public class FoundListingInfo : ElementInfo
     {
         // Page index of the page on which the item was found, used in key word promotion
-        public readonly int PageIndex;
-        public FoundListingInfo(int listingIndex, int pageIndex)
+        public readonly string PageIndex;
+        public FoundListingInfo(int listingIndex, string pageIndex)
         {
             base.ElementIndex = listingIndex;
             PageIndex = pageIndex;

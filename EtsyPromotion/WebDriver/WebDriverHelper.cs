@@ -188,6 +188,10 @@ namespace EtsyPromotion.WebDriver
             {
                 Debug.Assert(false);
             }
+            catch (ElementNotInteractableException)
+            {
+                Debug.Assert(false);
+            }
 
             if (element.Location.IsEmpty)
                 return false;
