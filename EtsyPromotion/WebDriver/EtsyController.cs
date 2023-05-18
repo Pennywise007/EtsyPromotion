@@ -22,8 +22,15 @@ namespace EtsyPromotion.WebDriver
             //options.AddArguments("--incognito");
 
             // auto loading updates for chrome driver
-            var chromeDriverDirName = Path.GetDirectoryName(new DriverManager().SetUpDriver(new ChromeConfig(), "MatchingBrowser"));
-            return new ChromeDriver(chromeDriverDirName, options);
+            try
+            {
+                var chromeDriverDirName = Path.GetDirectoryName(new DriverManager().SetUpDriver(new ChromeConfig(), "MatchingBrowser"));
+                return new ChromeDriver(chromeDriverDirName, options);
+            }
+            catch (Exception)
+            {
+                return new ChromeDriver(options);
+            }
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>

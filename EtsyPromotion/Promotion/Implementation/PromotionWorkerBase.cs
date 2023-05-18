@@ -146,50 +146,29 @@ namespace EtsyPromotion.Promotion.Implementation
             TControllerType controller = null;
             try
             {
-                for (;;)
+                do
                 {
                     _errorMessage = null;
 
                     try
                     {
-                        controller = CreateWebDriverController();
+                        controller = CreateController();
                     }
                     catch (WebDriverException exception)
                     {
-                        throw new WebDriverException("Не удалось создать драйвер для управления хромом.", exception);
+                        OnException(exception);
+                        continue;
                     }
-
-                    ExecutePromotion(controller);
-
-                    if (runMode == RunMode.eOnes)
-                        break;
-
-                    controller.Driver.Quit();
-
-                    switch (runMode)
+                    
+                    try
                     {
-                        case RunMode.eMinutes_5:
-                            Thread.Sleep(new TimeSpan(0, 5, 0));
-                            break;
-                        case RunMode.eMinutes_15:
-                            Thread.Sleep(new TimeSpan(0, 15, 0));
-                            break;
-                        case RunMode.eHour_1:
-                            Thread.Sleep(new TimeSpan(1, 0, 0));
-                            break;
-                        case RunMode.eHour_5:
-                            Thread.Sleep(new TimeSpan(5, 0, 0));
-                            break;
-                        case RunMode.eDay:
-                            Thread.Sleep(new TimeSpan(1, 0, 0, 0));
-                            break;
-                        case RunMode.eUntilInterrupt:
-                            Thread.Sleep(3000);
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
+                        ExecutePromotion(controller);
                     }
-                }
+                    finally
+                    {
+                        controller.Driver.Quit();
+                    }
+                } while (Wait(runMode));
             }
             catch (Exception exception)
             {
@@ -210,6 +189,58 @@ namespace EtsyPromotion.Promotion.Implementation
 
                 WhenFinish?.Invoke(this, wasInterrupted ? null : _errorMessage);
             }
+        }
+
+        private TControllerType CreateController()
+        {
+            int attempt = 0, maxAttempts = 5;
+
+            while (true)
+            {
+                try
+                {
+                    return CreateWebDriverController();
+                }
+                catch (Exception exception)
+                {
+                    if (++attempt == maxAttempts)
+                    {
+                        throw new WebDriverException("Failed to create a web driver controller.", exception);
+                    }
+                }
+            }
+
+            throw new InvalidOperationException("Unreachable code");
+        }
+
+        private bool Wait(RunMode runMode)
+        {
+            switch (runMode)
+            {
+                case RunMode.eOnes:
+                    return false;
+                case RunMode.eMinutes_5:
+                    Thread.Sleep(new TimeSpan(0, 5, 0));
+                    break;
+                case RunMode.eMinutes_15:
+                    Thread.Sleep(new TimeSpan(0, 15, 0));
+                    break;
+                case RunMode.eHour_1:
+                    Thread.Sleep(new TimeSpan(1, 0, 0));
+                    break;
+                case RunMode.eHour_5:
+                    Thread.Sleep(new TimeSpan(5, 0, 0));
+                    break;
+                case RunMode.eDay:
+                    Thread.Sleep(new TimeSpan(1, 0, 0, 0));
+                    break;
+                case RunMode.eUntilInterrupt:
+                    Thread.Sleep(3000);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            return true;
         }
 
         protected void InspectCurrentListing(TControllerType controller, int listingIndex, bool addToCard)
