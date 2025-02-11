@@ -39,22 +39,22 @@
             this.button1 = new MetroFramework.Controls.MetroButton();
             this.PromotionList = new MetroFramework.Controls.MetroGrid();
             this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.keyWordsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.dateLastPromotionColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.FoundOnPage = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.StatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.productsListDataSource = new System.Windows.Forms.BindingSource(this.components);
             this.Button_StartPromotion = new MetroFramework.Controls.MetroButton();
             this.RunModeComboBox = new MetroFramework.Controls.MetroComboBox();
             this.RumModeLabel = new MetroFramework.Controls.MetroLabel();
             this.MaxSearchPagesCount = new MetroFramework.Controls.MetroLabel();
             this.MaximumSearchPagesNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.SiteModeComboBox = new MetroFramework.Controls.MetroComboBox();
+            this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.keyWordsDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.productsListDataSource = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.PromotionList)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.MaximumSearchPagesNumericUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).BeginInit();
             this.SuspendLayout();
             // 
             // ShopLink
@@ -181,31 +181,6 @@
             this.listingActionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
             this.listingActionColumn.Width = 160;
             // 
-            // linkDataGridViewTextBoxColumn
-            // 
-            this.linkDataGridViewTextBoxColumn.DataPropertyName = "Link";
-            this.linkDataGridViewTextBoxColumn.FillWeight = 50F;
-            this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
-            this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
-            this.linkDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.linkDataGridViewTextBoxColumn.Width = 304;
-            // 
-            // keyWordsDataGridViewTextBoxColumn
-            // 
-            this.keyWordsDataGridViewTextBoxColumn.DataPropertyName = "KeyWords";
-            this.keyWordsDataGridViewTextBoxColumn.HeaderText = "Ключевые слова(через ;)";
-            this.keyWordsDataGridViewTextBoxColumn.Name = "keyWordsDataGridViewTextBoxColumn";
-            this.keyWordsDataGridViewTextBoxColumn.ToolTipText = "Список ключевых слов по которым будет продвигаться товар(через ;)";
-            this.keyWordsDataGridViewTextBoxColumn.Width = 240;
-            // 
-            // noteDataGridViewTextBoxColumn
-            // 
-            this.noteDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.noteDataGridViewTextBoxColumn.DataPropertyName = "Note";
-            this.noteDataGridViewTextBoxColumn.FillWeight = 50F;
-            this.noteDataGridViewTextBoxColumn.HeaderText = "Заметка";
-            this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
-            // 
             // dateLastPromotionColumn
             // 
             this.dateLastPromotionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
@@ -232,14 +207,12 @@
             this.StatusColumn.ReadOnly = true;
             this.StatusColumn.Width = 45;
             // 
-            // productsListDataSource
-            // 
-            this.productsListDataSource.DataSource = typeof(ShopPromotion.Promotion.Interfaces.KeyWordsListingInfo);
-            // 
             // Button_StartPromotion
             // 
-            this.Button_StartPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.Button_StartPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.Button_StartPromotion.Location = new System.Drawing.Point(537, 527);
+            this.Button_StartPromotion.MinimumSize = new System.Drawing.Size(50, 0);
             this.Button_StartPromotion.Name = "Button_StartPromotion";
             this.Button_StartPromotion.Size = new System.Drawing.Size(577, 54);
             this.Button_StartPromotion.TabIndex = 4;
@@ -249,8 +222,7 @@
             // 
             // RunModeComboBox
             // 
-            this.RunModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.RunModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.RunModeComboBox.FormattingEnabled = true;
             this.RunModeComboBox.ItemHeight = 23;
             this.RunModeComboBox.Location = new System.Drawing.Point(218, 527);
@@ -281,8 +253,7 @@
             // 
             // MaximumSearchPagesNumericUpDown
             // 
-            this.MaximumSearchPagesNumericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.MaximumSearchPagesNumericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.MaximumSearchPagesNumericUpDown.Location = new System.Drawing.Point(460, 562);
             this.MaximumSearchPagesNumericUpDown.Maximum = new decimal(new int[] {
             300,
@@ -305,14 +276,46 @@
             // 
             // SiteModeComboBox
             // 
+            this.SiteModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.SiteModeComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.SiteModeComboBox.FormattingEnabled = true;
             this.SiteModeComboBox.ItemHeight = 23;
             this.SiteModeComboBox.Location = new System.Drawing.Point(407, 25);
+            this.SiteModeComboBox.MinimumSize = new System.Drawing.Size(70, 0);
             this.SiteModeComboBox.Name = "SiteModeComboBox";
             this.SiteModeComboBox.Size = new System.Drawing.Size(133, 29);
             this.SiteModeComboBox.TabIndex = 12;
             this.SiteModeComboBox.UseSelectable = true;
+            // 
+            // linkDataGridViewTextBoxColumn
+            // 
+            this.linkDataGridViewTextBoxColumn.DataPropertyName = "Link";
+            this.linkDataGridViewTextBoxColumn.FillWeight = 50F;
+            this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
+            this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
+            this.linkDataGridViewTextBoxColumn.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.linkDataGridViewTextBoxColumn.Width = 304;
+            // 
+            // keyWordsDataGridViewTextBoxColumn
+            // 
+            this.keyWordsDataGridViewTextBoxColumn.DataPropertyName = "KeyWords";
+            this.keyWordsDataGridViewTextBoxColumn.HeaderText = "Ключевые слова(через ;)";
+            this.keyWordsDataGridViewTextBoxColumn.Name = "keyWordsDataGridViewTextBoxColumn";
+            this.keyWordsDataGridViewTextBoxColumn.ToolTipText = "Список ключевых слов по которым будет продвигаться товар(через ;)";
+            this.keyWordsDataGridViewTextBoxColumn.Width = 240;
+            // 
+            // noteDataGridViewTextBoxColumn
+            // 
+            this.noteDataGridViewTextBoxColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.noteDataGridViewTextBoxColumn.DataPropertyName = "Note";
+            this.noteDataGridViewTextBoxColumn.FillWeight = 50F;
+            this.noteDataGridViewTextBoxColumn.HeaderText = "Заметка";
+            this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
+            // 
+            // productsListDataSource
+            // 
+            this.productsListDataSource.DataSource = typeof(ShopPromotion.Promotion.Interfaces.KeyWordsListingInfo);
             // 
             // KeywordPromotionForm
             // 
@@ -337,8 +340,8 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.KeywordPromotion_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.KeywordPromotion_FormClosed);
             ((System.ComponentModel.ISupportInitialize)(this.PromotionList)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.MaximumSearchPagesNumericUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.productsListDataSource)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 

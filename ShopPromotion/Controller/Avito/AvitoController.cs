@@ -35,7 +35,29 @@ namespace ShopPromotion.Controller.Avito
 
         public void OpenMainShopPage()
         {
-            OpenNewTab("https://www.avito.ru/");
+            base.OpenNewTab("https://www.avito.ru/");
+        }
+
+        /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
+        public override void OpenNewTab(string newUrl)
+        {
+            base.OpenNewTab(newUrl);
+
+            void AvoidFirewall()
+            {
+                var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(5));
+                //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
+                IWebElement firewallBanner = wait.Until(driver => driver.FindElement(By.ClassName("firewall-container")));
+
+                if (firewallBanner != null)
+                {
+                    Thread.Sleep(4000);
+                   // OpenInCurrentWindow("https://www.avito.ru/");
+                   // Thread.Sleep(2000);
+                    OpenInCurrentWindow(newUrl);
+                }
+            }
+            AvoidFirewall();
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
@@ -73,6 +95,17 @@ namespace ShopPromotion.Controller.Avito
                 Thread.Sleep(TimeSpan.FromMilliseconds(random.Next(minimumWaitingMillisecondSpan, minimumWaitingMillisecondSpan + 3000)));
             }
 
+            void PlayVideo()
+            {
+                try
+                {
+                    var videoButton = Driver.FindElement(By.XPath("//*[contains(@class, 'videoPlayer-button')]"));
+                    videoButton.Click();
+                }
+                catch
+                { }
+            }
+
             if (!GetNavigatorButtons(out IWebElement prevPicture, out IWebElement nextPicture))
             {
                 Wait();
@@ -91,18 +124,43 @@ namespace ShopPromotion.Controller.Avito
             {
                 bool videoWasWatched = false;
 
+                var firstElement = getPreviewImagesList.First().ImageElement;
+
                 // прокликиваем кнопки вперёд с двойным ожиданием на видео
                 int countPreviewPhotos = Math.Min(getPreviewImagesList.Count, 7);
                 while (countPreviewPhotos != 0)
                 {
                     var previewElement = getPreviewImagesList.First();
-                    videoWasWatched |= previewElement.IsVideo;
+                    if (previewElement.IsVideo && !videoWasWatched)
+                    {
+                        PlayVideo();
+                        videoWasWatched = true;
 
-                    Wait(previewElement.IsVideo);
-                    nextPicture.Click();
+                        Wait(true);
 
-                    getPreviewImagesList.RemoveAt(0);
-                    --countPreviewPhotos;
+                        getPreviewImagesList.RemoveAt(0);
+                        --countPreviewPhotos;
+
+                        // After we watched a video the button disappear, we switch to another element
+                        if (countPreviewPhotos != 0)
+                            getPreviewImagesList.First().ImageElement.Click();
+                        else
+                            firstElement.Click();
+
+                        if (!GetNavigatorButtons(out prevPicture, out nextPicture))
+                        {
+                            Wait();
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        Wait(false);
+                        nextPicture.Click();
+
+                        getPreviewImagesList.RemoveAt(0);
+                        --countPreviewPhotos;
+                    }
                 }
 
                 Wait();
@@ -115,6 +173,7 @@ namespace ShopPromotion.Controller.Avito
                 // смотрим видео которое не посмотрели
                 PreviewImages videoImage = getPreviewImagesList.Find(image => image.IsVideo);
                 videoImage.ImageElement.Click();
+                PlayVideo();
 
                 Wait(true);
             }
@@ -123,52 +182,57 @@ namespace ShopPromotion.Controller.Avito
         /// <exception cref="T:OpenQA.Selenium.WebDriverException">If no element matches the criteria.</exception>
         public void WatchComments(int maxPagesToWatch)
         {
-            void ScrollAllCommentsOnPage(ISearchContext commentsGroupElement)
+            void ScrollAllCommentsOnPage(ISearchContext commentsGroupElement, ref int startIndex)
             {
-                List<IWebElement> comments = commentsGroupElement.FindElements(By.ClassName("wt-grid__item-xs-12")).ToList();
+                List<IWebElement> comments = commentsGroupElement.FindElements(By.XPath("//*[contains(@class, 'ReviewSnippet-root')]")).ToList();
                 if (!comments.Any())
                     return;
 
-                foreach (var commentElement in comments)
+                for (int i = startIndex; i < comments.Count; ++i)
                 {
-                    ScrollToElement(commentElement);
+                    ScrollToElement(comments[i]);
                     Thread.Sleep(1000);
                 }
-            }
 
-            bool GoToNextPage(ISearchContext commentsGroupElement)
-            {
-                List<IWebElement> commentPagesAndForwardButtons = commentsGroupElement.FindElements(By.ClassName("wt-action-group__item-container")).ToList();
-                if (!commentPagesAndForwardButtons.Any())
-                    return false;
-
-                var nextCommentsPageButton = commentPagesAndForwardButtons.Last();
-
-                ScrollToElement(nextCommentsPageButton);
-                nextCommentsPageButton.Click();
-                return true;
+                startIndex += comments.Count;
             }
 
             try
             {
+                try
+                {
+                    IWebElement commentsButton = Driver.FindElement(By.XPath("//*[@data-marker='rating-caption/rating']"));
+                    commentsButton.Click();
+                    Thread.Sleep(2000);
+                }
+                catch (NoSuchElementException)
+                {
+                    return;
+                }
+
+                int startCommentIndex = 0;
                 for (var i = 0; i < maxPagesToWatch; ++i)
                 {
                     ISearchContext commentsGroupElement;
                     try
                     {
-                        commentsGroupElement = Driver.FindElement(ByAttribute.Name("data-reviews-container", "div"));
+                        commentsGroupElement = Driver.FindElement(By.XPath("//*[@data-marker='rating-popup/popup']"));
                     }
                     catch (NoSuchElementException)
                     {
                         return;
                     }
 
-                    ScrollAllCommentsOnPage(commentsGroupElement);
-                    if (!GoToNextPage(commentsGroupElement))
-                        break;
+                    ScrollAllCommentsOnPage(commentsGroupElement, ref startCommentIndex);
 
                     Thread.Sleep(3000);
                 }
+
+
+                /*IWebElement closeButtonparent = Driver.FindElement(By.XPath("//button"));
+                closeButtonparent.FindElement(By.XPath())
+                commentsButton.Click();
+                Thread.Sleep(2000);*/
             }
             catch (WebDriverException)
             {
@@ -252,25 +316,17 @@ namespace ShopPromotion.Controller.Avito
             prevPicture = nextPicture = null;
             try
             {
-                ISearchContext buttonsContext = (ISearchContext)Driver;
-                try
-                {
-                    // wait for buttons
-                    var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(3));
-                    //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
+                // wait for buttons
+                var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(3));
+                //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
 
-                    buttonsContext = wait.Until(driver => Driver.FindElement(By.ClassName("image-frame-controlButton-_vPNK")));
-                }
-                catch (NoSuchElementException) { }
-
-                List<IWebElement> navigatorButtons = buttonsContext.FindElements(ByAttribute.Name("data-carousel-nav-button", "button")).ToList();
-
+                List<IWebElement> navigatorButtons = wait.Until(driver => Driver.FindElements(By.XPath("//*[contains(@class, 'image-frame-controlButtonArea')]"))).ToList();
                 if (navigatorButtons.Count == 2)
                 {
-                    var dataDirectionFirstButton = navigatorButtons[0].GetAttribute("data-direction");
-                    if (dataDirectionFirstButton == "prev")
+                    var dataDirectionFirstButton = navigatorButtons[0].GetAttribute("data-delta");
+                    if (dataDirectionFirstButton == "-1")
                     {
-                        Trace.Assert(navigatorButtons[1].GetAttribute("data-direction") == "next", "У кнопок не совпали атрибуты data-direction");
+                        Trace.Assert(navigatorButtons[1].GetAttribute("data-delta") == "1", "У кнопок не совпали атрибуты data-delta");
 
                         prevPicture = navigatorButtons[0];
                         nextPicture = navigatorButtons[1];
@@ -278,9 +334,9 @@ namespace ShopPromotion.Controller.Avito
                         return true;
                     }
 
-                    if (dataDirectionFirstButton == "next")
+                    if (dataDirectionFirstButton == "1")
                     {
-                        Trace.Assert(navigatorButtons[1].GetAttribute("data-direction") == "prev", "У кнопок не совпали атрибуты data-direction");
+                        Trace.Assert(navigatorButtons[1].GetAttribute("data-delta") == "-1", "У кнопок не совпали атрибуты data-delta");
 
                         prevPicture = navigatorButtons[1];
                         nextPicture = navigatorButtons[0];
@@ -288,7 +344,7 @@ namespace ShopPromotion.Controller.Avito
                         return true;
                     }
 
-                    Trace.Assert(false, "У кнопок навигации не известные значения у атрибута data-direction");
+                    Trace.Assert(false, "У кнопок навигации не известные значения у атрибута data-delta");
                 }
             }
             catch (WebDriverException)
@@ -311,7 +367,7 @@ namespace ShopPromotion.Controller.Avito
 
                     try
                     {
-                        _videoImage = ByAttribute.IsAttributeExist(ImageElement, "data-carousel-thumbnail-video");
+                        _videoImage = ImageElement.GetAttribute("data-type") == "video";
                     }
                     catch (StaleElementReferenceException)
                     {
@@ -327,11 +383,11 @@ namespace ShopPromotion.Controller.Avito
         {
             try
             {
-                ISearchContext buttonsContext = Driver.FindElement(By.ClassName("listing-page-image-carousel-component")) ?? (ISearchContext)Driver;
+                ISearchContext previewContext = Driver.FindElement(By.XPath("//*[contains(@class, 'images-preview-previewWrapper')]"));
 
-                ReadOnlyCollection<IWebElement> images = buttonsContext.FindElements(ByAttribute.Name("data-carousel-pagination-item", "li"));
+                ReadOnlyCollection<IWebElement> previewItems = previewContext.FindElements(By.XPath(".//li[contains(@class, 'images-preview-previewImageWrapper')]"));
 
-                return images.Select(element => new PreviewImages
+                return previewItems.Select(element => new PreviewImages
                 {
                     ImageElement = element
                 }).ToList();

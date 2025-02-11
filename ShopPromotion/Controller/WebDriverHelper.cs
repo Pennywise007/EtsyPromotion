@@ -106,6 +106,11 @@ namespace ShopPromotion.Controller
             Driver.Navigate().GoToUrl(newUrl);
         }
 
+        public void OpenInCurrentWindow(string newUrl)
+        {
+            Driver.Navigate().GoToUrl(newUrl);
+        }
+
         public void Quit()
         {
             Driver.Quit();

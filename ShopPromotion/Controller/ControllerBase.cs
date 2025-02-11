@@ -14,6 +14,8 @@ namespace ShopPromotion.Controller
         string GetIpLocation();
         /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
         void OpenNewTab(string newUrl);
+        // Open in current browser window
+        void OpenInCurrentWindow(string newUrl);
         // Close everything
         void Quit();
         // maximize browser window

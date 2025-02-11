@@ -13,10 +13,8 @@ namespace ShopPromotion.Promotion.Implementation
     /// Base worker class for executing promotion on listings
     /// </summary>
     /// <typeparam name="TListingInfoType">Class with info about listing<see cref="T:ShopPromotion.Promotion.Interfaces.ListingInfo">ListingInfo</see></typeparam>
-    /// <typeparam name="TControllerType">Type of shop controller be used for promoting</typeparam>
-    internal abstract class PromotionWorkerBase<TListingInfoType/*, TControllerType*/>
+    internal abstract class PromotionWorkerBase<TListingInfoType>
         where TListingInfoType : ListingInfo
-       // where TControllerType : IShopController
     {
         public event EventHandler WhenStart;
 
