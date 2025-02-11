@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using ShopPromotion.Promotion.Interfaces;
 using ShopPromotion.Controller;
 using OpenQA.Selenium;
+using System.Threading;
 
 namespace ShopPromotion.Promotion.Implementation
 {
@@ -64,6 +65,7 @@ namespace ShopPromotion.Promotion.Implementation
                     continue;
                 }
 
+                Thread.Sleep(2000);
                 InspectCurrentListing(controller, linkInfo.ElementIndexInProductsList, linkInfo.AddToCard);
             }
         }

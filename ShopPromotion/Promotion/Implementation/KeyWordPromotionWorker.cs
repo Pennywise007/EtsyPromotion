@@ -179,6 +179,7 @@ namespace ShopPromotion.Promotion.Implementation
                                 continue;
                             }
 
+                            Thread.Sleep(2000);
                             InspectCurrentListing(controller, promotionInfo.ElementIndexInProductsList,
                                 promotionInfo.Action == ListingInfo.ListingAction.AddToCard);
 

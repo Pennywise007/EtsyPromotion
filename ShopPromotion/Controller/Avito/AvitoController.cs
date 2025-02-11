@@ -46,16 +46,17 @@ namespace ShopPromotion.Controller.Avito
             void AvoidFirewall()
             {
                 var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(5));
-                //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
-                IWebElement firewallBanner = wait.Until(driver => driver.FindElement(By.ClassName("firewall-container")));
-
-                if (firewallBanner != null)
+                try
                 {
-                    Thread.Sleep(4000);
-                   // OpenInCurrentWindow("https://www.avito.ru/");
-                   // Thread.Sleep(2000);
-                    OpenInCurrentWindow(newUrl);
+                    IWebElement firewallBanner = wait.Until(driver => driver.FindElement(By.ClassName("firewall-container")));
                 }
+                catch (NoSuchElementException)
+                {
+                    return;
+                }
+
+                Thread.Sleep(4000);
+                OpenInCurrentWindow(newUrl);
             }
             AvoidFirewall();
         }
@@ -191,7 +192,9 @@ namespace ShopPromotion.Controller.Avito
                 for (int i = startIndex; i < comments.Count; ++i)
                 {
                     ScrollToElement(comments[i]);
-                    Thread.Sleep(1000);
+#if !DEBUG
+                    Thread.Sleep(TimeSpan.FromMilliseconds(random.Next(1500, 2500)));
+#endif
                 }
 
                 startIndex += comments.Count;
@@ -220,7 +223,7 @@ namespace ShopPromotion.Controller.Avito
                     }
                     catch (NoSuchElementException)
                     {
-                        return;
+                        break;
                     }
 
                     ScrollAllCommentsOnPage(commentsGroupElement, ref startCommentIndex);
@@ -228,11 +231,10 @@ namespace ShopPromotion.Controller.Avito
                     Thread.Sleep(3000);
                 }
 
-
-                /*IWebElement closeButtonparent = Driver.FindElement(By.XPath("//button"));
-                closeButtonparent.FindElement(By.XPath())
-                commentsButton.Click();
-                Thread.Sleep(2000);*/
+                IWebElement closeButtonparent = Driver.FindElement(By.XPath("//*[contains(@class, 'styles-module-closeButton-')]"));
+                IWebElement closeButton = closeButtonparent.FindElement(By.TagName("path"));
+                closeButton.Click();
+                Thread.Sleep(2000);
             }
             catch (WebDriverException)
             {

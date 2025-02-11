@@ -241,7 +241,6 @@ namespace ShopPromotion.Promotion.Implementation
 
         protected void InspectCurrentListing(IShopController controller, int listingIndex, bool addToCard)
         {
-            bool failed = false;
             try
             {
                 controller.PreviewPhotos();
@@ -262,6 +261,7 @@ namespace ShopPromotion.Promotion.Implementation
                     $"Возникла ошибка при просмотре комментариев к товару, обратитесь к администратору.\n\n {exception}");
             }
 
+            bool failed = false;
             if (addToCard)
             {
                 try
