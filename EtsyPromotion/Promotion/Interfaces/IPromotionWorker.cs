@@ -18,6 +18,12 @@ namespace EtsyPromotion.Promotion.Interfaces
         eUntilInterrupt
     }
 
+    public enum SiteMode
+    {
+        eAvito = 0,
+        eEtsy = 1
+    }
+
     /// <summary>
     /// Interface for executing promotion on multiple listings
     /// </summary>
@@ -48,7 +54,7 @@ namespace EtsyPromotion.Promotion.Interfaces
         event Func<int, bool> OnSuccessfullyPromoted;
 
         /// <returns> True if promotion started successfully </returns>
-        bool StartPromotion(List<TListingInfoType> listingsList, RunMode runMode);
+        bool StartPromotion(List<TListingInfoType> listingsList, RunMode runMode, SiteMode siteMode);
 
         /// <summary> Interrupting promotion </summary>
         void Interrupt();
@@ -100,6 +106,24 @@ namespace EtsyPromotion.Promotion.Interfaces
                 new RunModeDetails{ Mode = RunMode.eHour_5, Presentation = "Раз в 5 часов" },
                 new RunModeDetails{ Mode = RunMode.eDay, Presentation = "Раз в 5 день" },
                 new RunModeDetails{ Mode = RunMode.eUntilInterrupt, Presentation = "До отмены" }
+            };
+            combobox.DisplayMember = "Presentation";
+            combobox.ValueMember = "Mode";
+        }
+    }
+
+    // Helping class for getting the presentation of site modes
+    public class SiteModeDetails
+    {
+        public SiteMode Mode { get; set; }
+        public string Presentation { get; set; }
+
+        public static void SetupSiteModeToComboBox(ref MetroFramework.Controls.MetroComboBox combobox)
+        {
+            combobox.DataSource = new BindingList<SiteModeDetails>
+            {
+                new SiteModeDetails{ Mode = SiteMode.eAvito, Presentation = "Avito.ru" },
+                new SiteModeDetails{ Mode = SiteMode.eEtsy, Presentation = "Esty.com" },
             };
             combobox.DisplayMember = "Presentation";
             combobox.ValueMember = "Mode";

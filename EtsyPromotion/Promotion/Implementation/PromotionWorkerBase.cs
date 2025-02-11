@@ -53,7 +53,7 @@ namespace EtsyPromotion.Promotion.Implementation
         private int _countSuccessfullyPromotedListings = 0;
 
         /// <returns> True if promotion started successfully </returns>
-        public bool StartPromotion(List<TListingInfoType> listingsList, RunMode runMode)
+        public bool StartPromotion(List<TListingInfoType> listingsList, RunMode runMode, SiteMode siteMode)
         {
             _countSuccessfullyPromotedListings = 0;
             ClearErrorMessage();

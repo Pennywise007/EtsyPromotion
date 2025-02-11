@@ -11,12 +11,6 @@ using OpenQA.Selenium;
 
 namespace EtsyPromotion.General
 {
-    /// <summary> Default program settings struct </summary>
-    public class ProgramSettings
-    {
-        [XmlAttribute] public int SettingsVersion = 1;
-    }
-
     /// <summary>
     /// Helping class for upgrading program settings from previous version to the most recent
     /// </summary>
@@ -57,7 +51,8 @@ namespace EtsyPromotion.General
         {
             try
             {
-                var attribute = _xmlDoc?.FirstChild?.Attributes?["SettingsVersion"];
+                var settingsNode = _xmlDoc.SelectSingleNode($"//*[starts-with(name(), 'Settings')]");
+                var attribute = settingsNode?.Attributes?["SettingsVersion"];
                 if (attribute == null || string.IsNullOrEmpty(attribute.Value))
                     return null;
 

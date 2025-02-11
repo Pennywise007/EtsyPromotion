@@ -44,6 +44,7 @@
             this.CurrentIP = new MetroFramework.Controls.MetroLink();
             this.RumModeLabel = new MetroFramework.Controls.MetroLabel();
             this.RunModeComboBox = new MetroFramework.Controls.MetroComboBox();
+            this.SiteModeComboBox = new MetroFramework.Controls.MetroComboBox();
             this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
             this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.lastPromotionDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -232,6 +233,17 @@
             this.RunModeComboBox.TabIndex = 7;
             this.RunModeComboBox.UseSelectable = true;
             // 
+            // SiteModeComboBox
+            // 
+            this.SiteModeComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.SiteModeComboBox.FormattingEnabled = true;
+            this.SiteModeComboBox.ItemHeight = 23;
+            this.SiteModeComboBox.Location = new System.Drawing.Point(180, 24);
+            this.SiteModeComboBox.Name = "SiteModeComboBox";
+            this.SiteModeComboBox.Size = new System.Drawing.Size(133, 29);
+            this.SiteModeComboBox.TabIndex = 8;
+            this.SiteModeComboBox.UseSelectable = true;
+            // 
             // listingActionColumn
             // 
             this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
@@ -277,6 +289,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
             this.ClientSize = new System.Drawing.Size(797, 579);
+            this.Controls.Add(this.SiteModeComboBox);
             this.Controls.Add(this.RunModeComboBox);
             this.Controls.Add(this.RumModeLabel);
             this.Controls.Add(this.Button_RunPromotion);
@@ -286,7 +299,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Style = MetroFramework.MetroColorStyle.Green;
-            this.Text = "Продвижение Etsy.com";
+            this.Text = "Продвижение";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
             this.Load += new System.EventHandler(this.MainForm_Load);
@@ -318,6 +331,7 @@
         private System.Windows.Forms.DataGridViewImageColumn PromotionStatusColumn;
         private MetroFramework.Controls.MetroLabel RumModeLabel;
         private MetroFramework.Controls.MetroComboBox RunModeComboBox;
+        private MetroFramework.Controls.MetroComboBox SiteModeComboBox;
     }
 }
 

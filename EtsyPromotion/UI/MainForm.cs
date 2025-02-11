@@ -41,9 +41,11 @@ namespace EtsyPromotion.UI
 
             ListingActionDetails.SetupListingActionsToColumn(ref listingActionColumn);
             RunModeDetails.SetupRunModeToComboBox(ref RunModeComboBox);
+            SiteModeDetails.SetupSiteModeToComboBox(ref SiteModeComboBox);
 
             LoadSettingsFromXML();
             RunModeComboBox.SelectedIndex = (int)_settings.RunMode;
+            SiteModeComboBox.SelectedIndex = (int)_settings.SiteMode;
 
             ItemsTable.DataSource = new BindingSource
             {
@@ -74,6 +76,7 @@ namespace EtsyPromotion.UI
             {
                 ItemsTable.Enabled = false;
                 RunModeComboBox.Enabled = false;
+                SiteModeComboBox.Enabled = false;
                 Button_RunPromotion.Text = "Прервать продвижение";
             }));
         }
@@ -84,6 +87,8 @@ namespace EtsyPromotion.UI
             {
                 ItemsTable.Enabled = true;
                 RunModeComboBox.Enabled = true;
+                SiteModeComboBox.Enabled = true;
+
                 Button_RunPromotion.Enabled = true;
                 Button_RunPromotion.Text = "Запустить продвижение";
 
@@ -151,6 +156,7 @@ namespace EtsyPromotion.UI
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             _settings.RunMode = (RunModeComboBox.SelectedItem as RunModeDetails).Mode;
+            _settings.SiteMode = (SiteModeComboBox.SelectedItem as SiteModeDetails).Mode;
             SaveSettingsToXML();
 
             _updateIpCancellationToken.Cancel();
@@ -162,23 +168,22 @@ namespace EtsyPromotion.UI
 
             try
             {
-                int? settingsVersion = upgrader.GetCurrentSettingsVersion();
+                int? currentSettingsVersion = upgrader.GetCurrentSettingsVersion();
+
+                var settingsVersion = currentSettingsVersion;
                 if (settingsVersion == null)
                 {
                     upgrader.RenameAllNodes("ArrayOfEtsyLinkInfo", "Settings");
                     upgrader.RenameAllNodes("EtsyLinkInfo", "ListingInfo");
-
                     upgrader.AddNewSeparatorNodeBetweenNodes("Settings", "ListingInfo", "ListingsList");
 
-                    upgrader.AddAttributeToNodes("Settings", "SettingsVersion", ((int)Settings.Versions.eCurrent).ToString());
+                    settingsVersion = (int)Settings.Versions.eKeywordsPromotion;
                 }
-                else
-                {
-                    if (settingsVersion.Value < (int)Settings.Versions.eCurrent)
-                    {
-                        Debug.Assert(false, "Пока есть только первая версия настроек");
-                    }
-                }
+
+                if (settingsVersion != currentSettingsVersion)
+                    upgrader.AddAttributeToNodes("Settings", "SettingsVersion", settingsVersion.ToString());
+
+                Debug.Assert(settingsVersion == (int)Settings.Versions.eCurrent, "Not updated settings version");
             }
             finally
             {
@@ -295,7 +300,7 @@ namespace EtsyPromotion.UI
                 return;
             }
 
-            _listingPromotionWorker.StartPromotion(_settings.ListingsList, (RunModeComboBox.SelectedItem as RunModeDetails).Mode);
+            _listingPromotionWorker.StartPromotion(_settings.ListingsList, (RunModeComboBox.SelectedItem as RunModeDetails).Mode, (SiteModeComboBox.SelectedItem as SiteModeDetails).Mode);
         }
 
         private void ItemsTable_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -418,17 +423,23 @@ namespace EtsyPromotion.UI
             e.Graphics.DrawString(rowIdx, this.Font, SystemBrushes.ControlText, headerBounds, centerFormat);
         }
 
-        public class Settings : ProgramSettings
+        public class Settings
         {
             // Settings version
             public enum Versions
             {
-                eCurrent = 1
-            }
+                eInitial = 0,
+                eKeywordsPromotion,
 
+                // Add new versions here
+                eLast,
+                eCurrent = eLast - 1
+            }
+            [XmlAttribute] public int SettingsVersion = (int)Versions.eCurrent;
+
+            public SiteMode SiteMode = SiteMode.eAvito;
             public RunMode RunMode = RunMode.eOnes;
             public List<ListingInfo> ListingsList = new List<ListingInfo>();
         }
-
     }
 }
