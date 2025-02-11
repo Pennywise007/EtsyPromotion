@@ -1,2 +1,2 @@
-# EtsyPromotion
-Etsy.com store and product promotion program
+# ShopPromotion
+Etsy.com/Avito.ru store and product promotion program
