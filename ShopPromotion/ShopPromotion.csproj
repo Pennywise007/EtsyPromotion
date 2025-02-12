@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>net9.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows7.0</TargetFramework>
 		<OutputType>WinExe</OutputType>
 		<UseWindowsForms>true</UseWindowsForms>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	</PropertyGroup>
 	<PropertyGroup>
 		<IsPublishable>true</IsPublishable>
@@ -15,7 +17,18 @@
 	</PropertyGroup>
 	<PropertyGroup>
 		<StartupObject>ShopPromotion.Program</StartupObject>
+		<ApplicationIcon>resourses\etsy_icon.ico</ApplicationIcon>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
+	<ItemGroup>
+	  <Content Include="resourses\etsy_icon.ico" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Include="..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="MetroModernUI" />
 		<PackageReference Include="Microsoft.CSharp" />
