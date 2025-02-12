@@ -193,7 +193,7 @@ namespace ShopPromotion.Controller.Avito
                 {
                     ScrollToElement(comments[i]);
 #if !DEBUG
-                    Thread.Sleep(TimeSpan.FromMilliseconds(new Random(DateTime.Now.Millisecond).Next(1500, 2500)));
+                    Thread.Sleep(TimeSpan.FromMilliseconds(new Random().Next(1500, 2500)));
 #endif
                 }
 
