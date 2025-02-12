@@ -197,12 +197,17 @@ namespace ShopPromotion.UI
 
         private void LoadSettingsFromXML()
         {
+            var settingFile = GetCurrentWindowSettingsFilePath();
+
+            if (!File.Exists(settingFile))
+                return;
+
             UpgradeSettingsFile();
 
             try
             {
                 var smlSerializer = new XmlSerializer(typeof(Settings));
-                using (var rd = new StreamReader(GetCurrentWindowSettingsFilePath()))
+                using (var rd = new StreamReader(settingFile))
                 {
                     _settings = smlSerializer.Deserialize(rd) as Settings;
                 }

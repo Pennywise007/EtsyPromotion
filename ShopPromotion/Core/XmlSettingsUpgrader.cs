@@ -23,23 +23,15 @@ namespace ShopPromotion.General
         {
             _filePath = filePath;
 
-            try
-            {
-                _xmlDoc = new XmlDocument();
-                _xmlDoc.Load(_filePath);
-            }
-            catch (Exception exception)
-            {
-                _xmlDoc = null;
-                Debug.Assert(false, exception.Message);
-            }
+            _xmlDoc = new XmlDocument();
+            _xmlDoc.Load(_filePath);
         }
 
         public void Dispose()
         {
             try
             {
-                _xmlDoc?.Save(_filePath);
+                _xmlDoc.Save(_filePath);
             }
             catch (XmlException exception)
             {
@@ -61,16 +53,12 @@ namespace ShopPromotion.General
             catch (Exception exception)
             {
                 Debug.Assert(false, exception.Message);
+                return null;
             }
-
-            return null;
         }
 
         public void RenameAllNodes(string oldNodesName, string newNodesName)
         {
-            if (_xmlDoc == null)
-                return;
-
             try
             {
                 XmlNodeList oldNamedNodeList = _xmlDoc.SelectNodes($"//*[starts-with(name(), '{oldNodesName}')]");
@@ -91,9 +79,6 @@ namespace ShopPromotion.General
 
         public void AddNewSeparatorNodeBetweenNodes(string mainParentNodeName, string childrenNodesName, string newSeparatorNodeName)
         {
-            if (_xmlDoc == null)
-                return;
-
             try
             {
                 XmlNodeList mainParentNodeList = _xmlDoc.SelectNodes($"//*[starts-with(name(), '{mainParentNodeName}')]");
@@ -133,9 +118,6 @@ namespace ShopPromotion.General
 
         public void AddAttributeToNodes(string nodesName, string attributeName, string attributeValue)
         {
-            if (_xmlDoc == null)
-                return;
-
             try
             {
                 XmlNodeList namedNodeList = _xmlDoc.SelectNodes($"//*[starts-with(name(), '{nodesName}')]");

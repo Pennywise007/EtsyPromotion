@@ -193,6 +193,9 @@ namespace ShopPromotion.UI
 
         private void LoadSettingsFromXML()
         {
+            if (!File.Exists(Globals.SettingsFileName))
+                return;
+
             UpgradeSettingsFile();
 
             try
