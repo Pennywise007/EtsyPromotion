@@ -28,10 +28,9 @@ namespace ShopPromotion.General
                 _xmlDoc = new XmlDocument();
                 _xmlDoc.Load(_filePath);
             }
-            catch (Exception exception)
+            catch
             {
                 _xmlDoc = null;
-                Debug.Assert(false, exception.Message);
             }
         }
 
@@ -58,12 +57,10 @@ namespace ShopPromotion.General
 
                 return int.Parse(attribute.Value);
             }
-            catch (Exception exception)
+            catch
             {
-                Debug.Assert(false, exception.Message);
+                return null;
             }
-
-            return null;
         }
 
         public void RenameAllNodes(string oldNodesName, string newNodesName)
