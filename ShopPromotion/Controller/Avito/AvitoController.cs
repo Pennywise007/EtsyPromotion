@@ -35,7 +35,7 @@ namespace ShopPromotion.Controller.Avito
 
         public void OpenMainShopPage()
         {
-            base.OpenNewTab("https://www.avito.ru/");
+            OpenNewTab("https://www.avito.ru/");
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchWindowException">If the window cannot be found.</exception>
@@ -45,41 +45,41 @@ namespace ShopPromotion.Controller.Avito
 
             void AvoidFirewall()
             {
-                var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(5));
                 try
                 {
-                    IWebElement firewallBanner = wait.Until(driver => driver.FindElement(By.ClassName("firewall-container")));
+                    WaitForElement(By.ClassName("firewall-container"), TimeSpan.FromSeconds(10));
                 }
                 catch (NoSuchElementException)
                 {
                     return;
                 }
 
-                Thread.Sleep(4000);
                 OpenInCurrentWindow(newUrl);
+                Thread.Sleep(10000);
             }
             AvoidFirewall();
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
-        public void AddCurrentItemToCard()
+        public void AddCurrentItemToCart()
         {
-            IWebElement element = Driver.FindElement(By.ClassName("add-to-cart-form"));
-            ScrollToElement(element);
+            // we can't add to cart without logging in, just add to favorites
+            var itemActionsContext = Driver.FindElement(By.XPath(".//div[contains(@class, 'style-item-view-content-right')]"));
+            IWebElement favoriteButton = itemActionsContext.FindElement(By.XPath(".//button[@data-marker='item-view/favorite-button']"));
 
+            // item already in fav
+            if (favoriteButton.GetAttribute("data-is-favorite") == "true")
+                return;
+
+            ClickClickableChild(favoriteButton);
 #if !DEBUG
-            Thread.Sleep(1300);
+            Thread.Sleep(3000);
+#else
+            Thread.Sleep(1000);
 #endif
 
-            element.Click();
-
-            // wait for adding to card
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-            //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
-            IWebElement addedToCardCheck = wait.Until(driver => driver.FindElement(By.ClassName("proceed-to-checkout")));
-
-            if (!addedToCardCheck.Displayed)
-                throw new NoSuchElementException("Не удалось добавить в корзину.");
+            if (favoriteButton.GetAttribute("data-is-favorite") != "true")
+                throw new NoSuchElementException("Не удалось добавить в избранное.");
         }
 
         /// <exception cref="T:OpenQA.Selenium.WebDriverException">If no element matches the criteria.</exception>
@@ -100,7 +100,7 @@ namespace ShopPromotion.Controller.Avito
             {
                 try
                 {
-                    var videoButton = Driver.FindElement(By.XPath("//*[contains(@class, 'videoPlayer-button')]"));
+                    var videoButton = Driver.FindElement(By.XPath(".//*[contains(@class, 'videoPlayer-button')]"));
                     videoButton.Click();
                 }
                 catch
@@ -183,9 +183,13 @@ namespace ShopPromotion.Controller.Avito
         /// <exception cref="T:OpenQA.Selenium.WebDriverException">If no element matches the criteria.</exception>
         public void WatchComments(int maxPagesToWatch)
         {
+            // we can't see comments for every listing in avito without logging in, simply ignore the comments in 33% cases
+            if (new Random().Next(0, 2) == 0)
+                return;
+
             void ScrollAllCommentsOnPage(ISearchContext commentsGroupElement, ref int startIndex)
             {
-                List<IWebElement> comments = commentsGroupElement.FindElements(By.XPath("//*[contains(@class, 'ReviewSnippet-root')]")).ToList();
+                List<IWebElement> comments = commentsGroupElement.FindElements(By.XPath(".//*[contains(@class, 'ReviewSnippet-root')]")).ToList();
                 if (!comments.Any())
                     return;
 
@@ -204,7 +208,7 @@ namespace ShopPromotion.Controller.Avito
             {
                 try
                 {
-                    IWebElement commentsButton = Driver.FindElement(By.XPath("//*[@data-marker='rating-caption/rating']"));
+                    IWebElement commentsButton = Driver.FindElement(By.XPath(".//*[@data-marker='rating-caption/rating']"));
                     commentsButton.Click();
                     Thread.Sleep(2000);
                 }
@@ -219,7 +223,7 @@ namespace ShopPromotion.Controller.Avito
                     ISearchContext commentsGroupElement;
                     try
                     {
-                        commentsGroupElement = Driver.FindElement(By.XPath("//*[@data-marker='rating-popup/popup']"));
+                        commentsGroupElement = Driver.FindElement(By.XPath(".//*[@data-marker='rating-popup/popup']"));
                     }
                     catch (NoSuchElementException)
                     {
@@ -231,7 +235,7 @@ namespace ShopPromotion.Controller.Avito
                     Thread.Sleep(3000);
                 }
 
-                IWebElement closeButtonparent = Driver.FindElement(By.XPath("//*[contains(@class, 'styles-module-closeButton-')]"));
+                IWebElement closeButtonparent = Driver.FindElement(By.XPath(".//*[contains(@class, 'styles-module-closeButton-')]"));
                 IWebElement closeButton = closeButtonparent.FindElement(By.TagName("path"));
                 closeButton.Click();
                 Thread.Sleep(2000);
@@ -243,62 +247,49 @@ namespace ShopPromotion.Controller.Avito
 
         public List<IWebElement> GetSuggestionsFromCurrentShop()
         {
-            ISearchContext shopSuggestionsGroupElement = Driver;
-
-            try
-            {
-                shopSuggestionsGroupElement = Driver.FindElement(By.ClassName("other-info"));
-            }
-            catch (NoSuchElementException) { }
-
-            try
-            {
-                shopSuggestionsGroupElement = shopSuggestionsGroupElement.FindElement(By.ClassName("responsive-listing-grid"));
-            }
-            catch (NoSuchElementException) { }
-
-            try
-            {
-                var suggestionsList = shopSuggestionsGroupElement.FindElements(By.ClassName("js-merch-stash-check-listing")).ToList();
-                return suggestionsList.ConvertAll(suggestion => suggestion.FindElement(By.ClassName("listing-link")));
-            }
-            catch (NoSuchElementException)
-            {
-                return new List<IWebElement>();
-            }
+            // Avito doesn't support it
+            return new List<IWebElement>();
         }
 
-        public List<IWebElement> GetShopListingsList()
+        public List<IWebElement> GetShopListingsList(bool loadAll)
         {
-            ISearchContext shopSuggestionsGroupElement = Driver;
-
+            // press show all
             try
             {
-                shopSuggestionsGroupElement = Driver.FindElement(ByAttribute.Name("data-listings-container-wrapper"));
-            }
-            catch (NoSuchElementException) { }
-
-            try
-            {
-                shopSuggestionsGroupElement = shopSuggestionsGroupElement.FindElement(By.ClassName("data-featured-products-default-grid"));
-            }
-            catch (NoSuchElementException) { }
-
-            try
-            {
-                var suggestionsList = shopSuggestionsGroupElement.FindElements(By.ClassName("js-merch-stash-check-listing")).ToList();
-                return suggestionsList.ConvertAll(suggestion => suggestion.FindElement(By.ClassName("listing-link")));
+                var showMoreButton = WaitForElement(ByAttribute.Value("data-marker", "item_list_with_filters/show_all_button"), TimeSpan.FromSeconds(5));
+                showMoreButton.Click();
             }
             catch (NoSuchElementException)
             {
-                return new List<IWebElement>();
             }
+
+            Thread.Sleep(2000);
+
+            if (loadAll)
+            {
+                ScrollUntilReachThePageEnd();
+            }
+            else
+            {
+                // load some elements
+                var countLoads = new Random().Next(2, 4);
+                for (var i = 0; i < countLoads; ++i)
+                {
+                    ScrollToThePageEnd();
+                    Thread.Sleep(new Random().Next(1000, 2500));
+                }
+            }
+
+            var shopSuggestionsGroupElement = Driver.FindElement(By.XPath(".//*[contains(@class, 'ProfileItemsGrid-root')]"));
+            var suggestionsList = shopSuggestionsGroupElement.FindElements(By.XPath(".//div[starts-with(@data-marker, 'item_list_with_filters/item')]")).ToList();
+
+            return suggestionsList.ConvertAll(suggestion => suggestion.FindElement(By.XPath(".//*[contains(@class, 'iva-item-title')]")));
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         public IWebElement FindSellerLink()
         {
-            return Driver.FindElement(By.Id("listing-page-cart")).FindElement(By.ClassName("wt-text-link-no-underline"));
+            return Driver.FindElement(ByAttribute.Value("data-marker", "seller-link/link", "a"));
         }
 
         /// <exception cref="T:OpenQA.Selenium.NotFoundException">If no element matches the criteria.</exception>
@@ -307,8 +298,7 @@ namespace ShopPromotion.Controller.Avito
             OpenMainShopPage();
 
             // wait card to appear
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(5));
-            IWebElement locationElement = wait.Until(driver => driver.FindElement(ByAttribute.Value("data-marker", "location/tooltip")));
+            var locationElement = WaitForElement(ByAttribute.Value("data-marker", "location/tooltip"), TimeSpan.FromSeconds(5));
             // result like   Мы не смогли определить ваш город\r\nИзменить\r\nОставить так
             return locationElement.Text.Split('\r').First().Trim();
         }
@@ -319,10 +309,7 @@ namespace ShopPromotion.Controller.Avito
             try
             {
                 // wait for buttons
-                var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(3));
-                //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
-
-                List<IWebElement> navigatorButtons = wait.Until(driver => Driver.FindElements(By.XPath("//*[contains(@class, 'image-frame-controlButtonArea')]"))).ToList();
+                var navigatorButtons = WaitForElements(By.XPath(".//*[contains(@class, 'image-frame-controlButtonArea')]"), TimeSpan.FromSeconds(5));
                 if (navigatorButtons.Count == 2)
                 {
                     var dataDirectionFirstButton = navigatorButtons[0].GetAttribute("data-delta");
@@ -349,9 +336,8 @@ namespace ShopPromotion.Controller.Avito
                     Trace.Assert(false, "У кнопок навигации не известные значения у атрибута data-delta");
                 }
             }
-            catch (WebDriverException)
-            {
-            }
+            catch (NoSuchElementException) { }
+            catch (WebDriverException) { }
 
             return false;
         }
@@ -385,7 +371,7 @@ namespace ShopPromotion.Controller.Avito
         {
             try
             {
-                ISearchContext previewContext = Driver.FindElement(By.XPath("//*[contains(@class, 'images-preview-previewWrapper')]"));
+                ISearchContext previewContext = Driver.FindElement(By.XPath(".//*[contains(@class, 'images-preview-previewWrapper')]"));
 
                 ReadOnlyCollection<IWebElement> previewItems = previewContext.FindElements(By.XPath(".//li[contains(@class, 'images-preview-previewImageWrapper')]"));
 

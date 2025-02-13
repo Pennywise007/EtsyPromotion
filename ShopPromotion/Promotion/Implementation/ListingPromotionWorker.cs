@@ -53,10 +53,13 @@ namespace ShopPromotion.Promotion.Implementation
 
         protected override void ExecutePromotion(IShopController controller)
         {
-            foreach (var linkInfo in _promotionList)
+            for (int i = 0; i < _promotionList.Count; ++i)
             {
+                _promotingItemNumber = i + 1;
+                var linkInfo = _promotionList[i];
                 try
                 {
+                    UpdateStatus("Открываем ссылку");
                     controller.OpenNewTab(linkInfo.ListingLink);
                 }
                 catch (WebDriverException exception)
@@ -66,7 +69,7 @@ namespace ShopPromotion.Promotion.Implementation
                 }
 
                 Thread.Sleep(2000);
-                InspectCurrentListing(controller, linkInfo.ElementIndexInProductsList, linkInfo.AddToCard);
+                InspectCurrentListing(controller, linkInfo.ElementIndexInProductsList, linkInfo.AddToCard, true);
             }
         }
 

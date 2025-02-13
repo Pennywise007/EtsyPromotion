@@ -48,6 +48,9 @@ namespace ShopPromotion.Promotion.Interfaces
         /// <summary> An error occurred during the listing promotion </summary>
         event EventHandler<ErrorDuringListingPromotion> WhenErrorDuringListingPromotion;
 
+        /// <summary> Notification about status changes </summary>
+        event EventHandler<string> WhenStatusUpdated;
+
         /// <summary> Delegate that some listings was promoted, calling before closing web driver after promotion </summary>
         /// <param>Count of promoted listings</param>
         /// <returns>Return true if need to close web driver, false otherwise </returns>

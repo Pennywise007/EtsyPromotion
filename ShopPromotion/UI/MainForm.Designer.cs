@@ -29,262 +29,271 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            components = new System.ComponentModel.Container();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            this.ItemsTable = new MetroFramework.Controls.MetroGrid();
-            this.listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.openLinkColumn = new System.Windows.Forms.DataGridViewButtonColumn();
-            this.lastPromotionDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PromotionStatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
-            this.etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.Button_RunPromotion = new MetroFramework.Controls.MetroButton();
-            this.Button_CheckLocation = new MetroFramework.Controls.MetroButton();
-            this.Button_KeyWordPromotion = new MetroFramework.Controls.MetroButton();
-            this.CurrentIP = new MetroFramework.Controls.MetroLink();
-            this.RumModeLabel = new MetroFramework.Controls.MetroLabel();
-            this.RunModeComboBox = new MetroFramework.Controls.MetroComboBox();
-            this.SiteModeComboBox = new MetroFramework.Controls.MetroComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.ItemsTable)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.etsyLinkInfoBindingSource)).BeginInit();
-            this.SuspendLayout();
+            ItemsTable = new MetroFramework.Controls.MetroGrid();
+            listingActionColumn = new System.Windows.Forms.DataGridViewComboBoxColumn();
+            linkDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            openLinkColumn = new System.Windows.Forms.DataGridViewButtonColumn();
+            lastPromotionDateColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            noteDataGridViewTextBoxColumn = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            PromotionStatusColumn = new System.Windows.Forms.DataGridViewImageColumn();
+            etsyLinkInfoBindingSource = new System.Windows.Forms.BindingSource(components);
+            Button_RunPromotion = new MetroFramework.Controls.MetroButton();
+            Button_CheckLocation = new MetroFramework.Controls.MetroButton();
+            Button_KeyWordPromotion = new MetroFramework.Controls.MetroButton();
+            CurrentIP = new MetroFramework.Controls.MetroLink();
+            RumModeLabel = new MetroFramework.Controls.MetroLabel();
+            RunModeComboBox = new MetroFramework.Controls.MetroComboBox();
+            SiteModeComboBox = new MetroFramework.Controls.MetroComboBox();
+            LabelStatus = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)ItemsTable).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)etsyLinkInfoBindingSource).BeginInit();
+            SuspendLayout();
             // 
             // ItemsTable
             // 
-            this.ItemsTable.AllowUserToOrderColumns = true;
-            this.ItemsTable.AllowUserToResizeRows = false;
-            this.ItemsTable.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ItemsTable.AutoGenerateColumns = false;
-            this.ItemsTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.ItemsTable.BackgroundColor = System.Drawing.Color.White;
-            this.ItemsTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.ItemsTable.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
-            this.ItemsTable.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.PeachPuff;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            dataGridViewCellStyle1.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.Color.Silver;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ItemsTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.ItemsTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.ItemsTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.listingActionColumn,
-            this.linkDataGridViewTextBoxColumn,
-            this.openLinkColumn,
-            this.lastPromotionDateColumn,
-            this.noteDataGridViewTextBoxColumn,
-            this.PromotionStatusColumn});
-            this.ItemsTable.DataSource = this.etsyLinkInfoBindingSource;
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.Color.Black;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.Color.Silver;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.ItemsTable.DefaultCellStyle = dataGridViewCellStyle2;
-            this.ItemsTable.EnableHeadersVisualStyles = false;
-            this.ItemsTable.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            this.ItemsTable.GridColor = System.Drawing.Color.White;
-            this.ItemsTable.Location = new System.Drawing.Point(15, 61);
-            this.ItemsTable.Name = "ItemsTable";
-            this.ItemsTable.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.White;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.Color.Silver;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(17)))), ((int)(((byte)(17)))), ((int)(((byte)(17)))));
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.ItemsTable.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.ItemsTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            this.ItemsTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.ItemsTable.Size = new System.Drawing.Size(770, 386);
-            this.ItemsTable.TabIndex = 0;
-            this.ItemsTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ItemsTable_CellContentClick);
-            this.ItemsTable.RowPostPaint += new System.Windows.Forms.DataGridViewRowPostPaintEventHandler(this.ItemsTable_RowPostPaint);
+            ItemsTable.AllowUserToOrderColumns = true;
+            ItemsTable.AllowUserToResizeRows = false;
+            ItemsTable.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            ItemsTable.AutoGenerateColumns = false;
+            ItemsTable.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            ItemsTable.BackgroundColor = System.Drawing.Color.White;
+            ItemsTable.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            ItemsTable.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
+            ItemsTable.ColumnHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle4.BackColor = System.Drawing.Color.PeachPuff;
+            dataGridViewCellStyle4.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            dataGridViewCellStyle4.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.Color.Silver;
+            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.Color.FromArgb(17, 17, 17);
+            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            ItemsTable.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            ItemsTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            ItemsTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] { listingActionColumn, linkDataGridViewTextBoxColumn, openLinkColumn, lastPromotionDateColumn, noteDataGridViewTextBoxColumn, PromotionStatusColumn });
+            ItemsTable.DataSource = etsyLinkInfoBindingSource;
+            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            dataGridViewCellStyle5.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 204);
+            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Black;
+            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.Color.Silver;
+            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.Color.FromArgb(17, 17, 17);
+            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            ItemsTable.DefaultCellStyle = dataGridViewCellStyle5;
+            ItemsTable.EnableHeadersVisualStyles = false;
+            ItemsTable.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            ItemsTable.GridColor = System.Drawing.Color.White;
+            ItemsTable.Location = new System.Drawing.Point(18, 70);
+            ItemsTable.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            ItemsTable.Name = "ItemsTable";
+            ItemsTable.RowHeadersBorderStyle = System.Windows.Forms.DataGridViewHeaderBorderStyle.Single;
+            dataGridViewCellStyle6.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle6.BackColor = System.Drawing.Color.White;
+            dataGridViewCellStyle6.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Pixel);
+            dataGridViewCellStyle6.ForeColor = System.Drawing.Color.FromArgb(255, 255, 255);
+            dataGridViewCellStyle6.SelectionBackColor = System.Drawing.Color.Silver;
+            dataGridViewCellStyle6.SelectionForeColor = System.Drawing.Color.FromArgb(17, 17, 17);
+            dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            ItemsTable.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
+            ItemsTable.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+            ItemsTable.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            ItemsTable.Size = new System.Drawing.Size(894, 449);
+            ItemsTable.TabIndex = 0;
+            ItemsTable.CellContentClick += ItemsTable_CellContentClick;
+            ItemsTable.RowPostPaint += ItemsTable_RowPostPaint;
             // 
             // listingActionColumn
             // 
-            this.listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.listingActionColumn.DataPropertyName = "ItemAction";
-            this.listingActionColumn.FillWeight = 75F;
-            this.listingActionColumn.HeaderText = "Действие";
-            this.listingActionColumn.Name = "listingActionColumn";
-            this.listingActionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
-            this.listingActionColumn.Width = 160;
+            listingActionColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            listingActionColumn.DataPropertyName = "ItemAction";
+            listingActionColumn.FillWeight = 75F;
+            listingActionColumn.HeaderText = "Действие";
+            listingActionColumn.Name = "listingActionColumn";
+            listingActionColumn.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
+            listingActionColumn.Width = 160;
             // 
             // linkDataGridViewTextBoxColumn
             // 
-            this.linkDataGridViewTextBoxColumn.DataPropertyName = "Link";
-            this.linkDataGridViewTextBoxColumn.FillWeight = 54.90196F;
-            this.linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
-            this.linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
+            linkDataGridViewTextBoxColumn.DataPropertyName = "Link";
+            linkDataGridViewTextBoxColumn.FillWeight = 54.90196F;
+            linkDataGridViewTextBoxColumn.HeaderText = "Ссылка на товар";
+            linkDataGridViewTextBoxColumn.Name = "linkDataGridViewTextBoxColumn";
             // 
             // openLinkColumn
             // 
-            this.openLinkColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.openLinkColumn.FillWeight = 75F;
-            this.openLinkColumn.HeaderText = "Перейти по ссылке";
-            this.openLinkColumn.Name = "openLinkColumn";
-            this.openLinkColumn.Text = "Открыть";
-            this.openLinkColumn.ToolTipText = "Открыть в браузере ссылку на товар";
-            this.openLinkColumn.UseColumnTextForButtonValue = true;
-            this.openLinkColumn.Width = 70;
+            openLinkColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            openLinkColumn.FillWeight = 75F;
+            openLinkColumn.HeaderText = "Перейти по ссылке";
+            openLinkColumn.Name = "openLinkColumn";
+            openLinkColumn.Text = "Открыть";
+            openLinkColumn.ToolTipText = "Открыть в браузере ссылку на товар";
+            openLinkColumn.UseColumnTextForButtonValue = true;
+            openLinkColumn.Width = 70;
             // 
             // lastPromotionDateColumn
             // 
-            this.lastPromotionDateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.lastPromotionDateColumn.DataPropertyName = "DateLastPromotion";
-            this.lastPromotionDateColumn.FillWeight = 153.1002F;
-            this.lastPromotionDateColumn.HeaderText = "Последнее продвижение";
-            this.lastPromotionDateColumn.Name = "lastPromotionDateColumn";
-            this.lastPromotionDateColumn.ToolTipText = "Дата последнего продвижения товара";
-            this.lastPromotionDateColumn.Width = 125;
+            lastPromotionDateColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            lastPromotionDateColumn.DataPropertyName = "DateLastPromotion";
+            lastPromotionDateColumn.FillWeight = 153.1002F;
+            lastPromotionDateColumn.HeaderText = "Последнее продвижение";
+            lastPromotionDateColumn.Name = "lastPromotionDateColumn";
+            lastPromotionDateColumn.ToolTipText = "Дата последнего продвижения товара";
+            lastPromotionDateColumn.Width = 125;
             // 
             // noteDataGridViewTextBoxColumn
             // 
-            this.noteDataGridViewTextBoxColumn.DataPropertyName = "Note";
-            this.noteDataGridViewTextBoxColumn.FillWeight = 28.35188F;
-            this.noteDataGridViewTextBoxColumn.HeaderText = "Заметка";
-            this.noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
-            this.noteDataGridViewTextBoxColumn.ToolTipText = "Любая заметка об этом элементе";
+            noteDataGridViewTextBoxColumn.DataPropertyName = "Note";
+            noteDataGridViewTextBoxColumn.FillWeight = 28.35188F;
+            noteDataGridViewTextBoxColumn.HeaderText = "Заметка";
+            noteDataGridViewTextBoxColumn.Name = "noteDataGridViewTextBoxColumn";
+            noteDataGridViewTextBoxColumn.ToolTipText = "Любая заметка об этом элементе";
             // 
             // PromotionStatusColumn
             // 
-            this.PromotionStatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
-            this.PromotionStatusColumn.Description = "Состояние каждого листинга";
-            this.PromotionStatusColumn.HeaderText = "Статус";
-            this.PromotionStatusColumn.Name = "PromotionStatusColumn";
-            this.PromotionStatusColumn.Width = 45;
+            PromotionStatusColumn.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            PromotionStatusColumn.Description = "Состояние каждого листинга";
+            PromotionStatusColumn.HeaderText = "Статус";
+            PromotionStatusColumn.Name = "PromotionStatusColumn";
+            PromotionStatusColumn.Width = 45;
             // 
             // etsyLinkInfoBindingSource
             // 
-            this.etsyLinkInfoBindingSource.DataSource = typeof(ShopPromotion.Promotion.Interfaces.ListingInfo);
+            etsyLinkInfoBindingSource.DataSource = typeof(Promotion.Interfaces.ListingInfo);
             // 
             // Button_RunPromotion
             // 
-            this.Button_RunPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button_RunPromotion.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Button_RunPromotion.Location = new System.Drawing.Point(280, 453);
-            this.Button_RunPromotion.Name = "Button_RunPromotion";
-            this.Button_RunPromotion.Size = new System.Drawing.Size(505, 51);
-            this.Button_RunPromotion.TabIndex = 2;
-            this.Button_RunPromotion.Text = "Запустить продвижение";
-            this.Button_RunPromotion.UseSelectable = true;
-            this.Button_RunPromotion.Click += new System.EventHandler(this.Button_AddItemsToCard_Click);
+            Button_RunPromotion.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            Button_RunPromotion.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            Button_RunPromotion.Location = new System.Drawing.Point(328, 525);
+            Button_RunPromotion.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Button_RunPromotion.Name = "Button_RunPromotion";
+            Button_RunPromotion.Size = new System.Drawing.Size(585, 59);
+            Button_RunPromotion.TabIndex = 2;
+            Button_RunPromotion.Text = "Запустить продвижение";
+            Button_RunPromotion.UseSelectable = true;
+            Button_RunPromotion.Click += Button_AddItemsToCard_Click;
             // 
             // Button_CheckLocation
             // 
-            this.Button_CheckLocation.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.Button_CheckLocation.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Button_CheckLocation.Location = new System.Drawing.Point(15, 516);
-            this.Button_CheckLocation.Name = "Button_CheckLocation";
-            this.Button_CheckLocation.Size = new System.Drawing.Size(255, 40);
-            this.Button_CheckLocation.TabIndex = 1;
-            this.Button_CheckLocation.Text = "Проверить текущий ip и местоположение";
-            this.Button_CheckLocation.UseSelectable = true;
-            this.Button_CheckLocation.Click += new System.EventHandler(this.Button_CheckLocation_Click);
+            Button_CheckLocation.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            Button_CheckLocation.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            Button_CheckLocation.Location = new System.Drawing.Point(18, 594);
+            Button_CheckLocation.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Button_CheckLocation.Name = "Button_CheckLocation";
+            Button_CheckLocation.Size = new System.Drawing.Size(298, 46);
+            Button_CheckLocation.TabIndex = 1;
+            Button_CheckLocation.Text = "Проверить текущий ip и местоположение";
+            Button_CheckLocation.UseSelectable = true;
+            Button_CheckLocation.Click += Button_CheckLocation_Click;
             // 
             // Button_KeyWordPromotion
             // 
-            this.Button_KeyWordPromotion.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button_KeyWordPromotion.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.Button_KeyWordPromotion.BackColor = System.Drawing.Color.White;
-            this.Button_KeyWordPromotion.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.Button_KeyWordPromotion.Location = new System.Drawing.Point(281, 516);
-            this.Button_KeyWordPromotion.Name = "Button_KeyWordPromotion";
-            this.Button_KeyWordPromotion.Size = new System.Drawing.Size(504, 40);
-            this.Button_KeyWordPromotion.TabIndex = 0;
-            this.Button_KeyWordPromotion.Text = "Продвижение по ключевым словам";
-            this.Button_KeyWordPromotion.UseSelectable = true;
-            this.Button_KeyWordPromotion.Click += new System.EventHandler(this.Button_KeyWordPromotion_Click);
+            Button_KeyWordPromotion.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            Button_KeyWordPromotion.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            Button_KeyWordPromotion.BackColor = System.Drawing.Color.White;
+            Button_KeyWordPromotion.ForeColor = System.Drawing.SystemColors.ControlText;
+            Button_KeyWordPromotion.Location = new System.Drawing.Point(328, 594);
+            Button_KeyWordPromotion.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Button_KeyWordPromotion.Name = "Button_KeyWordPromotion";
+            Button_KeyWordPromotion.Size = new System.Drawing.Size(584, 46);
+            Button_KeyWordPromotion.TabIndex = 0;
+            Button_KeyWordPromotion.Text = "Продвижение по ключевым словам";
+            Button_KeyWordPromotion.UseSelectable = true;
+            Button_KeyWordPromotion.UseVisualStyleBackColor = false;
+            Button_KeyWordPromotion.Click += Button_KeyWordPromotion_Click;
             // 
             // CurrentIP
             // 
-            this.CurrentIP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.CurrentIP.AutoSize = true;
-            this.CurrentIP.Location = new System.Drawing.Point(533, 32);
-            this.CurrentIP.Name = "CurrentIP";
-            this.CurrentIP.Size = new System.Drawing.Size(252, 23);
-            this.CurrentIP.TabIndex = 5;
-            this.CurrentIP.Text = "Текущий IP:";
-            this.CurrentIP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.CurrentIP.UseSelectable = true;
-            this.CurrentIP.Click += new System.EventHandler(this.CurrentIP_Click);
+            CurrentIP.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            CurrentIP.AutoSize = true;
+            CurrentIP.Location = new System.Drawing.Point(618, 37);
+            CurrentIP.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            CurrentIP.Name = "CurrentIP";
+            CurrentIP.Size = new System.Drawing.Size(294, 27);
+            CurrentIP.TabIndex = 5;
+            CurrentIP.Text = "Текущий IP:";
+            CurrentIP.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            CurrentIP.UseSelectable = true;
+            CurrentIP.Click += CurrentIP_Click;
             // 
             // RumModeLabel
             // 
-            this.RumModeLabel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.RumModeLabel.AutoSize = true;
-            this.RumModeLabel.Location = new System.Drawing.Point(49, 453);
-            this.RumModeLabel.Name = "RumModeLabel";
-            this.RumModeLabel.Size = new System.Drawing.Size(189, 19);
-            this.RumModeLabel.TabIndex = 6;
-            this.RumModeLabel.Text = "Режим запуска продвижения";
+            RumModeLabel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            RumModeLabel.AutoSize = true;
+            RumModeLabel.Location = new System.Drawing.Point(70, 525);
+            RumModeLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            RumModeLabel.Name = "RumModeLabel";
+            RumModeLabel.Size = new System.Drawing.Size(189, 19);
+            RumModeLabel.TabIndex = 6;
+            RumModeLabel.Text = "Режим запуска продвижения";
             // 
             // RunModeComboBox
             // 
-            this.RunModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.RunModeComboBox.FormattingEnabled = true;
-            this.RunModeComboBox.ItemHeight = 23;
-            this.RunModeComboBox.Location = new System.Drawing.Point(15, 475);
-            this.RunModeComboBox.Name = "RunModeComboBox";
-            this.RunModeComboBox.Size = new System.Drawing.Size(255, 29);
-            this.RunModeComboBox.TabIndex = 7;
-            this.RunModeComboBox.UseSelectable = true;
+            RunModeComboBox.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            RunModeComboBox.FormattingEnabled = true;
+            RunModeComboBox.ItemHeight = 23;
+            RunModeComboBox.Location = new System.Drawing.Point(19, 555);
+            RunModeComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            RunModeComboBox.Name = "RunModeComboBox";
+            RunModeComboBox.Size = new System.Drawing.Size(297, 29);
+            RunModeComboBox.TabIndex = 7;
+            RunModeComboBox.UseSelectable = true;
             // 
             // SiteModeComboBox
             // 
-            this.SiteModeComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.SiteModeComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.SiteModeComboBox.FormattingEnabled = true;
-            this.SiteModeComboBox.ItemHeight = 23;
-            this.SiteModeComboBox.Location = new System.Drawing.Point(180, 24);
-            this.SiteModeComboBox.MinimumSize = new System.Drawing.Size(70, 0);
-            this.SiteModeComboBox.Name = "SiteModeComboBox";
-            this.SiteModeComboBox.Size = new System.Drawing.Size(133, 29);
-            this.SiteModeComboBox.TabIndex = 8;
-            this.SiteModeComboBox.UseSelectable = true;
+            SiteModeComboBox.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            SiteModeComboBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            SiteModeComboBox.FormattingEnabled = true;
+            SiteModeComboBox.ItemHeight = 23;
+            SiteModeComboBox.Location = new System.Drawing.Point(210, 28);
+            SiteModeComboBox.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            SiteModeComboBox.MinimumSize = new System.Drawing.Size(81, 0);
+            SiteModeComboBox.Name = "SiteModeComboBox";
+            SiteModeComboBox.Size = new System.Drawing.Size(150, 29);
+            SiteModeComboBox.TabIndex = 8;
+            SiteModeComboBox.UseSelectable = true;
+            // 
+            // LabelStatus
+            // 
+            LabelStatus.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            LabelStatus.Location = new System.Drawing.Point(18, 646);
+            LabelStatus.Name = "LabelStatus";
+            LabelStatus.Size = new System.Drawing.Size(894, 15);
+            LabelStatus.TabIndex = 9;
+            LabelStatus.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
-            this.ClientSize = new System.Drawing.Size(797, 579);
-            this.Controls.Add(this.Button_CheckLocation);
-            this.Controls.Add(this.Button_KeyWordPromotion);
-            this.Controls.Add(this.SiteModeComboBox);
-            this.Controls.Add(this.RunModeComboBox);
-            this.Controls.Add(this.RumModeLabel);
-            this.Controls.Add(this.Button_RunPromotion);
-            this.Controls.Add(this.CurrentIP);
-            this.Controls.Add(this.ItemsTable);
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "MainForm";
-            this.Style = MetroFramework.MetroColorStyle.Green;
-            this.Text = "Продвижение";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainForm_FormClosed);
-            this.Load += new System.EventHandler(this.MainForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.ItemsTable)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.etsyLinkInfoBindingSource)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            BorderStyle = MetroFramework.Forms.MetroFormBorderStyle.FixedSingle;
+            ClientSize = new System.Drawing.Size(926, 675);
+            Controls.Add(LabelStatus);
+            Controls.Add(Button_CheckLocation);
+            Controls.Add(Button_KeyWordPromotion);
+            Controls.Add(SiteModeComboBox);
+            Controls.Add(RunModeComboBox);
+            Controls.Add(RumModeLabel);
+            Controls.Add(Button_RunPromotion);
+            Controls.Add(CurrentIP);
+            Controls.Add(ItemsTable);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "MainForm";
+            Padding = new System.Windows.Forms.Padding(23, 69, 23, 23);
+            Style = MetroFramework.MetroColorStyle.Green;
+            Text = "Продвижение";
+            FormClosing += MainForm_FormClosing;
+            FormClosed += MainForm_FormClosed;
+            Load += MainForm_Load;
+            ((System.ComponentModel.ISupportInitialize)ItemsTable).EndInit();
+            ((System.ComponentModel.ISupportInitialize)etsyLinkInfoBindingSource).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -304,6 +313,7 @@
         private MetroFramework.Controls.MetroLabel RumModeLabel;
         private MetroFramework.Controls.MetroComboBox RunModeComboBox;
         private MetroFramework.Controls.MetroComboBox SiteModeComboBox;
+        private System.Windows.Forms.Label LabelStatus;
     }
 }
 

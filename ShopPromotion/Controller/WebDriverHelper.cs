@@ -5,6 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Interactions;
+using OpenQA.Selenium.Support.UI;
+using System.Threading;
 
 namespace ShopPromotion.Controller
 {
@@ -12,17 +14,17 @@ namespace ShopPromotion.Controller
     {
         public static By Name(string attributeName, string tag = "*")
         {
-            return By.XPath($"//{tag}[@{attributeName}]");
+            return By.XPath($".//{tag}[@{attributeName}]");
         }
 
         public static By Value(string attributeName, string attributeValue, string tag = "*")
         {
-            return By.XPath($"//{tag}[@{attributeName} = '{attributeValue}']");
+            return By.XPath($".//{tag}[@{attributeName} = '{attributeValue}']");
         }
 
         public static By PartOfValue(string attributeName, string partOfAttributeValue, string tag = "*")
         {
-            return By.XPath($"//{tag}[contains(@{attributeName}, '{partOfAttributeValue}')]");
+            return By.XPath($".//{tag}[contains(@{attributeName}, '{partOfAttributeValue}')]");
         }
 
         /// <exception cref="T:OpenQA.Selenium.StaleElementReferenceException">Thrown when the target element is no longer valid in the document DOM.</exception>
@@ -211,6 +213,34 @@ namespace ShopPromotion.Controller
             ((IJavaScriptExecutor)Driver).ExecuteScript($"window.scrollTo({xPosition}, {yPosition})");
         }
 
+        public void ScrollToThePageEnd()
+        {
+            ((IJavaScriptExecutor)Driver).ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
+        }
+        
+        protected long GetPageHeight()
+        {
+            return (long)((IJavaScriptExecutor)Driver).ExecuteScript("return document.body.scrollHeight");
+        }
+
+        public void ScrollUntilReachThePageEnd()
+        {
+            var lastHeight = GetPageHeight();
+
+            for (int i = 0; i < 10; i++)
+            {
+                ScrollToThePageEnd();
+
+                Thread.Sleep(2000);
+
+                var newHeight = GetPageHeight();
+                if (newHeight == lastHeight)
+                    break;
+                else
+                    lastHeight = newHeight;
+            }
+        }
+
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         private void DetermineConnectionSettings()
         {
@@ -241,6 +271,74 @@ namespace ShopPromotion.Controller
         public static IWebElement GetParentElement(IWebElement element)
         {
             return element.FindElement(By.XPath("./.."));
+        }
+
+        public IWebElement ClickClickableChild(IWebElement element)
+        {
+            // get all childs
+            var childElements = element.FindElements(By.XPath(".//*"));
+
+            foreach (var childElement in childElements)
+            {
+                try
+                {
+                    // Проверяем, кликабельный ли элемент
+                    if (childElement.Displayed && childElement.Enabled)
+                    {
+                        childElement.Click();
+                        return childElement;
+                    }
+                }
+                catch
+                {
+                }
+            }
+
+            throw new ElementNotInteractableException();
+        }
+
+        /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
+        public IWebElement WaitForElement(By by, TimeSpan span, ISearchContext context = null)
+        {
+            if (context == null)
+                context = Driver;
+
+            try
+            {
+                var wait = new WebDriverWait(Driver, span);
+                IWebElement element = wait.Until(driver =>
+                {
+                    var elements = context.FindElements(by);
+                    return elements.FirstOrDefault();
+                });
+                return element;
+            }
+            catch (WebDriverTimeoutException e)
+            {
+                throw new NoSuchElementException($"Element not found within {span.TotalMilliseconds} milliseconds", e);
+            }
+        }
+
+        /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
+        public List<IWebElement> WaitForElements(By by, TimeSpan span, ISearchContext context = null)
+        {
+            if (context == null)
+                context = Driver;
+
+            try
+            {
+                var wait = new WebDriverWait(Driver, span);
+                var elements = wait.Until(driver =>
+                {
+                    var foundElements = context.FindElements(by);
+                    return foundElements.Any() ? foundElements.ToList() : null;
+                });
+                return elements;
+            }
+            catch (WebDriverTimeoutException e)
+            {
+                throw new NoSuchElementException($"Element not found within {span.TotalMilliseconds} milliseconds", e);
+            }
         }
 
         // Debug function

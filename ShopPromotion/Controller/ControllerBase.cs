@@ -30,6 +30,8 @@ namespace ShopPromotion.Controller
         bool ScrollToElement(IWebElement element);
         // Scroll the window
         void ScrollTo(int xPosition = 0, int yPosition = 0);
+        // Scroll current page to the end
+        void ScrollToThePageEnd();
     }
 
     // Interface to do some manipulations with the shop
@@ -38,7 +40,7 @@ namespace ShopPromotion.Controller
         void OpenMainShopPage();
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
-        void AddCurrentItemToCard();
+        void AddCurrentItemToCart();
 
         /// <exception cref="T:OpenQA.Selenium.WebDriverException">If no element matches the criteria.</exception>
         void PreviewPhotos();
@@ -48,7 +50,7 @@ namespace ShopPromotion.Controller
 
         List<IWebElement> GetSuggestionsFromCurrentShop();
 
-        List<IWebElement> GetShopListingsList();
+        List<IWebElement> GetShopListingsList(bool loadAll);
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
         IWebElement FindSellerLink();

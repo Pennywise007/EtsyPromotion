@@ -65,9 +65,11 @@ namespace ShopPromotion.Promotion.Implementation
                     {
                         case SiteMode.eAvito:
                             {
-                                // TODO: FIX
-                                // link example https://www.etsy.com/listing/ID/... try extract ID
-                                var match = Regex.Match(listingInfo.Link, "etsy.com/listing/(.*)/");
+                                // link example https://www.avito.ru/moskovskaya_oblast_moskovskiy/mebel_i_interer/panno_iz_morskih_rakushek_3186756761?XXXXXX we use the relative link as ID
+                                // remove extra symbols from the url
+                                var onlyUrl = new Uri(listingInfo.Link).GetLeftPart(UriPartial.Path);
+
+                                var match = Regex.Match(listingInfo.Link, "www.avito.ru/(.*)");
                                 listingId = match.Groups[1].Value;
                             }
                             break;
@@ -121,13 +123,18 @@ namespace ShopPromotion.Promotion.Implementation
                 return;
             }
 
-            // TODO rework
-            searchController.OpenNewTab("https://www.etsy.com/");
+            searchController.OpenMainShopPage();
 
-            foreach (var promotionInfo in _promotionList)
+            for (int i = 0; i < _promotionList.Count; ++i)
             {
-                foreach (var keyWord in promotionInfo.KeyWords)
+                _promotingItemNumber = i + 1;
+                var promotionInfo = _promotionList[i];
+
+                for (int j = 0; j < promotionInfo.KeyWords.Count; ++j)
                 {
+                    var keyWord = promotionInfo.KeyWords[j];
+                    UpdateStatus($"Выполняем поиск({j + 1})");
+
                     searchController.SearchText(keyWord);
 
                     int currentPage = 0;
@@ -140,27 +147,27 @@ namespace ShopPromotion.Promotion.Implementation
 
                     do
                     {
-                        if (currentPage != 0)
-                        {
-                            // whaiting for loading page
-                            Thread.Sleep(3000);
-                        }
+                        // waiting for loading page
+                        Thread.Sleep(3000);
 
                         ++currentPage;
 
                         List<IWebElement> allResults = new List<IWebElement>();
                         try
                         {
+                            UpdateStatus($"Получаем список результатов({j + 1})");
                             allResults = searchController.GetListOfSearchResults();
                         }
                         catch (NoSuchElementException) { }
 
                         try
                         {
+                            UpdateStatus($"Ищем элемент({j + 1})");
                             productLink = searchController.FindListingInSearchResults(promotionInfo.ListingId);
                         }
                         catch (NoSuchElementException) { }
 
+                        UpdateStatus($"Скролим результаты поиска({j + 1})");
                         ScrollSearchResults(controller, allResults, productLink);
                     } while (productLink == null && currentPage < maxPageNumber && searchController.OpenNextSearchPage(currentPage + 1));
 
@@ -170,6 +177,7 @@ namespace ShopPromotion.Promotion.Implementation
                         {
                             try
                             {
+                                UpdateStatus($"Открываем продвигаемый листинг({j + 1})");
                                 controller.OpenInNewTab(productLink);
                             }
                             catch (WebDriverException exception)
@@ -181,7 +189,7 @@ namespace ShopPromotion.Promotion.Implementation
 
                             Thread.Sleep(2000);
                             InspectCurrentListing(controller, promotionInfo.ElementIndexInProductsList,
-                                promotionInfo.Action == ListingInfo.ListingAction.AddToCard);
+                                promotionInfo.Action == ListingInfo.ListingAction.AddToCard, false);
 
                             try
                             {

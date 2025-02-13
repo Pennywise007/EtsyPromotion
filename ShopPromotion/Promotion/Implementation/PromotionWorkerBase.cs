@@ -18,6 +18,9 @@ namespace ShopPromotion.Promotion.Implementation
     {
         public event EventHandler WhenStart;
 
+        /// <summary> Notification about status changes </summary>
+        public event EventHandler<string> WhenStatusUpdated;
+
         /// <summary> Finishing promotion </summary>
         /// <param> string is null if no error otherwise contain error message</param>
         public event EventHandler<string> WhenFinish;
@@ -45,11 +48,14 @@ namespace ShopPromotion.Promotion.Implementation
         /// </summary>
         private string _errorMessage;
         private int _countSuccessfullyPromotedListings = 0;
+        // used to track current item index for status message
+        protected int _promotingItemNumber = 1;
 
         /// <returns> True if promotion started successfully </returns>
         public bool StartPromotion(List<TListingInfoType> listingsList, RunMode runMode, SiteMode siteMode)
         {
             _countSuccessfullyPromotedListings = 0;
+            _promotingItemNumber = 0;
             ClearErrorMessage();
 
             if (!InitializeAndCheckListings(listingsList, siteMode))
@@ -63,6 +69,8 @@ namespace ShopPromotion.Promotion.Implementation
             Debug.Assert(!IsWorking(), "Поток уже работает");
 
             WhenStart?.Invoke(this, new EventArgs());
+            
+            UpdateStatus("Starting promotion");
 
             _workerThread = new Thread(() => PromotionThread(runMode, siteMode));
             _workerThread.Start();
@@ -85,7 +93,11 @@ namespace ShopPromotion.Promotion.Implementation
 
         public void Dispose()
         {
-            _workerThread?.Abort();
+            try
+            {
+                _workerThread?.Abort();
+            }
+            catch { }
         }
 
         /// <summary>
@@ -148,6 +160,7 @@ namespace ShopPromotion.Promotion.Implementation
 
                     try
                     {
+                        UpdateStatus("Создаем контроллер");
                         controller = CreateController(siteMode);
                     }
                     catch (WebDriverException exception)
@@ -158,6 +171,7 @@ namespace ShopPromotion.Promotion.Implementation
                     
                     try
                     {
+                        UpdateStatus("Выполняем промоушен");
                         ExecutePromotion(controller);
                     }
                     finally
@@ -211,6 +225,7 @@ namespace ShopPromotion.Promotion.Implementation
 
         private bool Wait(RunMode runMode)
         {
+            UpdateStatus("Ждем следующего запуска");
             switch (runMode)
             {
                 case RunMode.eOnes:
@@ -239,10 +254,11 @@ namespace ShopPromotion.Promotion.Implementation
             return true;
         }
 
-        protected void InspectCurrentListing(IShopController controller, int listingIndex, bool addToCard)
+        protected void InspectCurrentListing(IShopController controller, int listingIndex, bool addToCard, bool checkComments)
         {
             try
             {
+                UpdateStatus("Просматриваем фото");
                 controller.PreviewPhotos();
             }
             catch (WebDriverException exception)
@@ -251,37 +267,31 @@ namespace ShopPromotion.Promotion.Implementation
                     $"Возникла ошибка при просмотре фотографий товара, обратитесь к администратору.\n\n {exception}");
             }
 
-            try
+            if (checkComments)
             {
-                controller.WatchComments(2);
-            }
-            catch (WebDriverException exception)
-            {
-                OnErrorDuringPromotion(listingIndex,
-                    $"Возникла ошибка при просмотре комментариев к товару, обратитесь к администратору.\n\n {exception}");
+                try
+                {
+                    UpdateStatus("Просматриваем комментарии");
+                    controller.WatchComments(2);
+                }
+                catch (WebDriverException exception)
+                {
+                    OnErrorDuringPromotion(listingIndex,
+                        $"Возникла ошибка при просмотре комментариев к товару, обратитесь к администратору.\n\n {exception}");
+                }
             }
 
-            bool failed = false;
             if (addToCard)
             {
                 try
                 {
-                    controller.AddCurrentItemToCard();
-#if !DEBUG
-                    Thread.Sleep(1500);
-#endif
+                    UpdateStatus("Добавляем в корзину/избранное");
+                    controller.AddCurrentItemToCart();
                 }
                 catch (WebDriverException exception)
                 {
-                    failed = true;
                     OnErrorDuringPromotion(listingIndex,
                         $"Возникла ошибка при добавлении товара в корзину, возможно товара нет в корзине или у него есть несколько вариантов добавления в корзину, обратитесь к администратору.\n\n {exception}");
-                }
-
-                if (!failed)
-                {
-                    controller.Back();
-                    Thread.Sleep(1000); // wait for load
                 }
             }
 
@@ -292,13 +302,13 @@ namespace ShopPromotion.Promotion.Implementation
             else if (!checkSuggestions && !PreviewShopListings(controller))
                 PreviewSuggestions(controller);
 
-            if (!failed)
-                OnSuccessfullyPromotedListing(listingIndex);
+            OnSuccessfullyPromotedListing(listingIndex);
         }
 
         // Open few random listings from seller suggestions with preview photo and comments
         protected bool PreviewSuggestions(IShopController controller)
         {
+            UpdateStatus("Смотрим предлоежения");
             var suggestionsList = controller.GetSuggestionsFromCurrentShop();
             if (!suggestionsList.Any())
                 return false;
@@ -311,10 +321,12 @@ namespace ShopPromotion.Promotion.Implementation
                 Thread.Sleep(1000);
 #endif
 
+                UpdateStatus("Открываем предложения");
                 controller.OpenInNewTab(suggestionsList[i]);
 
                 try
                 {
+                    UpdateStatus("Просматриваем фото внутри предложений");
                     controller.PreviewPhotos();
                 }
                 catch (WebDriverException)
@@ -322,6 +334,7 @@ namespace ShopPromotion.Promotion.Implementation
 
                 try
                 {
+                    UpdateStatus("Просматриваем комментарии внутри предложений");
                     controller.WatchComments(1);
                 }
                 catch (WebDriverException)
@@ -337,6 +350,7 @@ namespace ShopPromotion.Promotion.Implementation
         {
             try
             {
+                UpdateStatus("Открываем страницу магазина");
                 controller.OpenInNewTab(controller.FindSellerLink());
             }
             catch (WebDriverException)
@@ -346,7 +360,7 @@ namespace ShopPromotion.Promotion.Implementation
 
             try
             {
-                var shopListings = controller.GetShopListingsList();
+                var shopListings = controller.GetShopListingsList(false);
                 if (!shopListings.Any())
                     return false;
 
@@ -360,10 +374,12 @@ namespace ShopPromotion.Promotion.Implementation
 #if !DEBUG
                     Thread.Sleep(1000);
 #endif
+                    UpdateStatus("Открываем листинг мазагина");
                     controller.OpenInNewTab(shopListings[i]);
 
                     try
                     {
+                        UpdateStatus("Просматриваем фото внутри магазина");
                         controller.PreviewPhotos();
                     }
                     catch (WebDriverException)
@@ -371,6 +387,7 @@ namespace ShopPromotion.Promotion.Implementation
 
                     try
                     {
+                        UpdateStatus("Просматриваем комментарии внутри магазина");
                         controller.WatchComments(1);
                     }
                     catch (WebDriverException)
@@ -386,6 +403,12 @@ namespace ShopPromotion.Promotion.Implementation
                 controller.CloseCurrentTab();
             }
             return true;
+        }
+
+
+        protected void UpdateStatus(string status)
+        {
+            WhenStatusUpdated?.Invoke(this, $"{_promotingItemNumber}: {status}");
         }
     }
 }

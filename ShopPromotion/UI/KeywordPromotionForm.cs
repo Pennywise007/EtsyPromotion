@@ -12,6 +12,8 @@ using ShopPromotion.UI;
 using ShopPromotion.General;
 using ShopPromotion.Promotion.Interfaces;
 using MetroFramework.Forms;
+using ShopPromotion.Controller;
+using System.Linq;
 
 namespace ShopPromotion.UI
 {
@@ -57,6 +59,7 @@ namespace ShopPromotion.UI
             RunModeComboBox.SelectedIndex = (int)_settings.RunMode;
             SiteModeComboBox.SelectedIndex = (int)_settings.SiteMode;
             MaximumSearchPagesNumericUpDown.Value = _settings.MaximumSearchPages;
+            ShopLink.Text = _settings.ShopLink;
 
             Show();
         }
@@ -76,9 +79,10 @@ namespace ShopPromotion.UI
             _worker.WhenException += OnException;
             _worker.WhenFinishListingPromotion += OnFinishListingPromotion;
             _worker.WhenFoundListing += OnWhenFoundListing;
+            _worker.WhenStatusUpdated += OnWhenStatusUpdated;
         }
 
-#region WorkerEvents
+        #region WorkerEvents
         private void OnStartPromotion(object sender, EventArgs e)
         {
             Invoke(new MethodInvoker(() =>
@@ -89,6 +93,8 @@ namespace ShopPromotion.UI
                 MaximumSearchPagesNumericUpDown.Enabled = false;
 
                 Button_StartPromotion.Text = "Прервать продвижение";
+
+                LabelStatus.Text = "";
             }));
         }
 
@@ -103,6 +109,8 @@ namespace ShopPromotion.UI
 
                 Button_StartPromotion.Enabled = true;
                 Button_StartPromotion.Text = "Запустить продвижение";
+
+                LabelStatus.Text = "";
 
                 if (!string.IsNullOrEmpty(error))
                     MessageBox.Show(this, error, "Во время выполнения продвижения возникли ошибки", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -133,6 +141,14 @@ namespace ShopPromotion.UI
             {
                 _settings.ProductsList[foundInfo.ElementIndex].FoundOnPage = foundInfo.PageIndex;
                 PromotionList.Refresh();
+            }));
+        }
+
+        private void OnWhenStatusUpdated(object sender, string status)
+        {
+            Invoke(new MethodInvoker(() =>
+            {
+                LabelStatus.Text = status;
             }));
         }
 
@@ -224,6 +240,7 @@ namespace ShopPromotion.UI
         private void SaveSettingsToXML()
         {
             _settings.SettingsVersion = (int)Settings.Versions.eCurrent;
+            _settings.ShopLink = ShopLink.Text;
             var smlSerializer = new XmlSerializer(typeof(Settings));
             using (var wr = new StreamWriter(GetCurrentWindowSettingsFilePath()))
             {
@@ -242,7 +259,7 @@ namespace ShopPromotion.UI
                 return;
             }
 
-            _worker.SetMaxSearchPagesCount((int) MaximumSearchPagesNumericUpDown.Value);
+            _worker.SetMaxSearchPagesCount((int)MaximumSearchPagesNumericUpDown.Value);
             _worker.StartPromotion(_settings.ProductsList, (RunModeComboBox.SelectedItem as RunModeDetails).Mode, (SiteModeComboBox.SelectedItem as SiteModeDetails).Mode);
         }
 
@@ -284,9 +301,49 @@ namespace ShopPromotion.UI
             [XmlAttribute] public int SettingsVersion = (int)Versions.eCurrent;
 
             public SiteMode SiteMode = SiteMode.eAvito;
+            public string ShopLink;
             public RunMode RunMode = RunMode.eOnes;
-            public int MaximumSearchPages = 100;
+            public int MaximumSearchPages = 3;
             public List<KeyWordsListingInfo> ProductsList = new List<KeyWordsListingInfo>();
+        }
+
+        private void ButtonDownloadShopListings_Click(object sender, EventArgs e)
+        {
+            var controller = ControllerFactory.NewShopController((SiteModeComboBox.SelectedItem as SiteModeDetails).Mode);
+
+            try
+            {
+                controller.OpenNewTab(ShopLink.Text);
+
+                var addedItems = 0;
+                var shopListings = controller.GetShopListingsList(true);
+                foreach (var listing in shopListings)
+                {
+                    var link = ByLink.GetElementLink(listing);
+                    // remove extra symbols from the url
+                    link = new Uri(link).GetLeftPart(UriPartial.Path);
+
+                    if (_settings.ProductsList.Any(element => element.Link == link))
+                        continue;
+
+                    _settings.ProductsList.Add(new KeyWordsListingInfo
+                    {
+                        Link = link,
+                    });
+                    ++addedItems;
+                }
+
+                // force table refresh
+                var bindingSource = PromotionList.DataSource as BindingSource;
+                bindingSource?.ResetBindings(false);
+
+                controller.CloseCurrentTab();
+                MessageBox.Show(this, $"Новых элементов добавлено в таблицу {addedItems}", "Элементы загружены из магазина", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            catch (Exception exception)
+            {
+                Globals.HandleException(exception, "Ошибка при загрузке листингов из магазина");
+            }
         }
     }
 }

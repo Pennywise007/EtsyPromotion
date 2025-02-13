@@ -67,9 +67,10 @@ namespace ShopPromotion.UI
             _listingPromotionWorker.WhenException += OnException;
             _listingPromotionWorker.WhenFinishListingPromotion += OnFinishListingPromotion;
             _listingPromotionWorker.OnSuccessfullyPromoted += OnSuccessfullyPromoted;
+            _listingPromotionWorker.WhenStatusUpdated += OnWhenStatusUpdated;
         }
 
-#region WorkerEvents
+        #region WorkerEvents
         private void OnStartPromotion(object sender, EventArgs e)
         {
             Invoke(new MethodInvoker(() =>
@@ -78,6 +79,7 @@ namespace ShopPromotion.UI
                 RunModeComboBox.Enabled = false;
                 SiteModeComboBox.Enabled = false;
                 Button_RunPromotion.Text = "Прервать продвижение";
+                LabelStatus.Text = "";
             }));
         }
 
@@ -91,6 +93,7 @@ namespace ShopPromotion.UI
 
                 Button_RunPromotion.Enabled = true;
                 Button_RunPromotion.Text = "Запустить продвижение";
+                LabelStatus.Text = "";
 
                 if (!string.IsNullOrEmpty(error))
                     MessageBox.Show(this, error, "Во время выполнения продвижения возникли ошибки", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
@@ -136,7 +139,15 @@ namespace ShopPromotion.UI
 
             return closeWindow;
         }
-#endregion
+        private void OnWhenStatusUpdated(object sender, string status)
+        {
+            Invoke(new MethodInvoker(() =>
+            {
+                LabelStatus.Text = status;
+            }));
+        }
+
+        #endregion
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {

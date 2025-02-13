@@ -62,7 +62,7 @@ namespace ShopPromotion.Controller.Etsy
         }
 
         /// <exception cref="T:OpenQA.Selenium.NoSuchElementException">If no element matches the criteria.</exception>
-        public void AddCurrentItemToCard()
+        public void AddCurrentItemToCart()
         {
             IWebElement element = Driver.FindElement(By.ClassName("add-to-cart-form"));
             ScrollToElement(element);
@@ -74,10 +74,7 @@ namespace ShopPromotion.Controller.Etsy
             element.Click();
 
             // wait for adding to card
-            var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(10));
-            //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
-            IWebElement addedToCardCheck = wait.Until(driver => driver.FindElement(By.ClassName("proceed-to-checkout")));
-
+            var addedToCardCheck = WaitForElement(By.ClassName("proceed-to-checkout"), TimeSpan.FromSeconds(10));
             if (!addedToCardCheck.Displayed)
                 throw new NoSuchElementException("Не удалось добавить в корзину.");
         }
@@ -225,7 +222,7 @@ namespace ShopPromotion.Controller.Etsy
             }
         }
 
-        public List<IWebElement> GetShopListingsList()
+        public List<IWebElement> GetShopListingsList(bool loadAll)
         {
             ISearchContext shopSuggestionsGroupElement = Driver;
 
@@ -285,10 +282,7 @@ namespace ShopPromotion.Controller.Etsy
                 try
                 {
                     // wait for adding to card
-                    var wait = new WebDriverWait(Driver, TimeSpan.FromSeconds(3));
-                    //wait.IgnoreExceptionTypes(typeof(NoSuchElementException));
-
-                    buttonsContext = wait.Until(driver => Driver.FindElement(By.ClassName("listing-page-image-carousel-component")));
+                    buttonsContext = WaitForElement(By.ClassName("listing-page-image-carousel-component"), TimeSpan.FromSeconds(3));
                 }
                 catch (NoSuchElementException) {}
 
